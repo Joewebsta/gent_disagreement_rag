@@ -96,9 +96,11 @@ class DatabaseManager:
         """
         Execute a query with optional parameters.
         """
+        cursor = None
+        conn = None
         try:
-            conn = self.get_connection(cursor_factory=RealDictCursor)
-            cursor = conn.cursor()
+            conn = self.get_connection()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
             cursor.execute(query, params)
             results = cursor.fetchall()
             return results
@@ -106,5 +108,7 @@ class DatabaseManager:
             print("Error executing query:", e)
             raise e
         finally:
-            cursor.close()
-            conn.close()
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()

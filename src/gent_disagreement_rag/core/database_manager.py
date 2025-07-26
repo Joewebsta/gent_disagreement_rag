@@ -1,6 +1,8 @@
 import os
+
 import psycopg2
 from dotenv import load_dotenv
+from psycopg2.extras import RealDictCursor
 
 
 class DatabaseManager:
@@ -72,7 +74,7 @@ class DatabaseManager:
 
     def insert_transcript_segment_with_embedding(self, speaker, text, embedding):
         """
-        Insert a single transcript data with its embedding into the database.
+        Insert a single transcript segment with its embedding into the database.
         """
         conn = self.get_connection()
         cursor = conn.cursor()
@@ -85,7 +87,24 @@ class DatabaseManager:
             conn.commit()
             print(f"Stored embedding for: {text[:50]}...")
         except Exception as e:
-            print("Error inserting transcript data:", e)
+            print("Error inserting transcript segment:", e)
+        finally:
+            cursor.close()
+            conn.close()
+
+    def execute_query(self, query, params=None):
+        """
+        Execute a query with optional parameters.
+        """
+        try:
+            conn = self.get_connection(cursor_factory=RealDictCursor)
+            cursor = conn.cursor()
+            cursor.execute(query, params)
+            results = cursor.fetchall()
+            return results
+        except Exception as e:
+            print("Error executing query:", e)
+            raise e
         finally:
             cursor.close()
             conn.close()

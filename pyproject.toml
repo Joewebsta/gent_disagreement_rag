@@ -1,5 +1,5 @@
 [project]
-name = "gent-disagreement-rag"
+name = "gent-disagreement-processor"
 version = "0.1.0"
 description = ""
 authors = [
@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "gent_disagreement_rag", from = "src"}]
+packages = [{include = "gent_disagreement_processor", from = "src"}]
 
 
 [build-system]

@@ -10,7 +10,7 @@ This is a RAG (Retrieval-Augmented Generation) application for processing "A Gen
 
 The application follows a pipeline-based architecture with distinct processing stages and now includes a complete RAG implementation:
 
-### Core Processing Pipeline (`src/gent_disagreement_rag/core/`)
+### Core Processing Pipeline (`src/gent_disagreement_processor/core/`)
 - **AudioTranscriptProcessor**: Main orchestrator that coordinates the entire processing pipeline
 - **DatabaseManager**: Handles PostgreSQL connections and vector database operations
 - **EmbeddingService**: Generates and manages OpenAI text embeddings
@@ -21,7 +21,7 @@ The application follows a pipeline-based architecture with distinct processing s
 - **SegmentProcessor**: Processes segments for embedding preparation
 - **SpeakerSummarizer**: Creates summaries for each speaker
 
-### Data Layer (`src/gent_disagreement_rag/data/`)
+### Data Layer (`src/gent_disagreement_processor/data/`)
 - **raw/**: Contains raw transcript data
 - **processed/**: Stores processed segments ready for embedding generation
 - **Models**: Define data structures for segments and summaries
@@ -37,7 +37,7 @@ The application follows a pipeline-based architecture with distinct processing s
 - **RAGService**: Combines search results with OpenAI LLM for contextual responses
 - **ChatManager**: Provides interactive command-line interface
 
-### Utilities (`src/gent_disagreement_rag/utils/`)
+### Utilities (`src/gent_disagreement_processor/utils/`)
 - **DataExporter**: Exports processed data
 - **StatisticsReporter**: Generates processing statistics
 - **DataLoader**: Loads processed segments for embedding generation
@@ -55,7 +55,7 @@ poetry shell            # Activate virtual environment
 ```bash
 python main.py          # Run interactive chat interface
 # OR
-python -m src.gent_disagreement_rag.main  # Run as module
+python -m src.gent_disagreement_processor.main  # Run as module
 ```
 
 ### Database Requirements
@@ -82,7 +82,7 @@ python -m src.gent_disagreement_rag.main  # Run as module
 
 ## Entry Points
 - `main.py`: Root entry point that launches the interactive chat interface
-- `src/gent_disagreement_rag/main.py`: Main application logic with ChatManager integration
+- `src/gent_disagreement_processor/main.py`: Main application logic with ChatManager integration
 
 ## Processing Pipeline (Commented Out)
 The data processing pipeline components are available but currently commented out in main.py:

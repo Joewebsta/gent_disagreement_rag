@@ -12,7 +12,7 @@ class DataExporter:
     def export_data(
         processed_segments: List[SpeakerSegment],
         speaker_summaries: List[SpeakerSummary],
-        output_dir: str = "src/gent_disagreement_rag/data/processed/",
+        output_dir: str = "src/gent_disagreement_processor/data/processed/",
     ) -> None:
         """Export processed data to JSON files."""
         # Ensure output directory exists

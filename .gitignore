@@ -48,3 +48,18 @@ env/
 # Logs
 *.log
 logs/
+
+# Audio
+src/gent_disagreement_processor/data/raw/audio/
+
+# Transcripts
+src/gent_disagreement_processor/data/raw/deepgram/
+
+# Processed segments
+src/gent_disagreement_processor/data/processed/deepgram/
+
+# Embedding-ready segments
+src/gent_disagreement_processor/data/embedding_ready_segments/
+
+# Statistics
+src/gent_disagreement_processor/data/statistics/

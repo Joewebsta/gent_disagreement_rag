@@ -1,30 +1,41 @@
-from .core import (
+from gent_disagreement_processor.core import (
     AudioTranscriptProcessor,
     DatabaseManager,
     EmbeddingService,
-    RAGService,
+    AudioTranscriber,
 )
-from .data import raw_transcript_data
-from .utils import load_processed_segments
-from .core import ChatManager
+from gent_disagreement_processor.utils import load_processed_segments
+from gent_disagreement_processor.core import ChatManager
 
 
 def main():
     """Main execution function."""
 
-    # Process the transcript
-    # processor = AudioTranscriptProcessor()
-    # processor.process_transcript(raw_transcript_data)
+    file_name = "AGD-180-7"
 
-    # Setup the database
+    # # Transcribe audio file
+    # audio_transcriber = AudioTranscriber()
+    # audio_transcriber.generate_transcript(file_name)
+
+    # Process the raw transcript
+    processor = AudioTranscriptProcessor()
+    processor.process_transcript(file_name)
+
+    # # Setup the database
     # database_manager = DatabaseManager()
     # database_manager.setup_database()
 
-    # Generate embeddings
+    # # Generate embeddings
     # segments = load_processed_segments()
     # embedding_service = EmbeddingService()
     # embedding_service.generate_and_store_embeddings(segments)
 
-    # Run the chatbot
-    chat_manager = ChatManager()
-    chat_manager.run()
+    # # Run the chatbot
+    # chat_manager = ChatManager()
+    # chat_manager.run()
+
+
+# poetry run python src/gent_disagreement_processor/main.py
+
+if __name__ == "__main__":
+    main()

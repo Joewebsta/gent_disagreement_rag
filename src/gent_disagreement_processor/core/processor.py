@@ -1,9 +1,5 @@
-from typing import Any, Dict
-
+from ..utils import DataExporter
 from .formatter import DataFormatter
-from .segment_processor import SegmentProcessor
-from .speaker_summarizer import SpeakerSummarizer
-from ..utils import DataExporter, StatisticsReporter
 
 
 class AudioTranscriptProcessor:
@@ -11,26 +7,13 @@ class AudioTranscriptProcessor:
 
     def __init__(self):
         self.formatter = DataFormatter()
-        self.processor = SegmentProcessor()
-        self.summarizer = SpeakerSummarizer()
         self.exporter = DataExporter()
-        self.reporter = StatisticsReporter()
 
-    def process_transcript(self, data: Dict[str, Any]) -> None:
-        """Process the complete transcript data."""
-        segments = data["segments"]
+    def process_transcript(self, file_name: str) -> None:
+        """Process the raw transcript data. Export the formatted segments to a JSON file."""
 
         # Format segments
-        formatted_segments = self.formatter.format_segments(segments)
+        formatted_segments = self.formatter.format_segments(file_name)
 
-        # Process segments for embedding preparation
-        processed_segments = self.processor.process_speaker_segments(formatted_segments)
-
-        # Create speaker summaries
-        speaker_summaries = self.summarizer.create_speaker_summaries(processed_segments)
-
-        # Export data
-        self.exporter.export_data(processed_segments, speaker_summaries)
-
-        # Report statistics
-        self.reporter.print_statistics(processed_segments, speaker_summaries)
+        # Export segments to JSON file
+        self.exporter.export_data(formatted_segments, file_name)

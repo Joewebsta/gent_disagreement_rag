@@ -1,21 +1,17 @@
-[project]
+[tool.poetry]
 name = "gent-disagreement-processor"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Joe Webster",email = "joseph.scott.webster@gmail.com"}
-]
+authors = ["Joe Webster <joseph.scott.webster@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.11"
-dependencies = [
-    "openai (>=1.97.0,<2.0.0)",
-    "psycopg2 (>=2.9.10,<3.0.0)",
-    "dotenv (>=0.9.9,<0.10.0)"
-]
-
-[tool.poetry]
 packages = [{include = "gent_disagreement_processor", from = "src"}]
 
+[tool.poetry.dependencies]
+python = ">=3.11,<4.0"
+openai = ">=1.97.0,<2.0.0"
+psycopg2 = ">=2.9.10,<3.0.0"
+python-dotenv = ">=0.9.9,<1.0.0"
+deepgram-sdk = "^4.8.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

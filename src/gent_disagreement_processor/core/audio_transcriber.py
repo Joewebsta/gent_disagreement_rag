@@ -12,9 +12,7 @@ class AudioTranscriber:
 
     def generate_transcript(self, file_name: str) -> str:
         """Generate a transcript from a local audio file."""
-        audio_file_path = (
-            f"src/gent_disagreement_processor/data/raw/audio/{file_name}.m4a"
-        )
+        audio_file_path = f"src/gent_disagreement_processor/data/raw/audio/{file_name}"
 
         try:
             print(f"Starting transcription of: {file_name}")

@@ -10,8 +10,10 @@ class DataFormatter:
         self.normalizer = TextNormalizer()
 
     def format_segments(self, file_name: str):
+        # Remove any file extension and add .json
+        base_name = file_name.rsplit(".", 1)[0] if "." in file_name else file_name
         file_path = (
-            f"src/gent_disagreement_processor/data/raw/deepgram/{file_name}.json"
+            f"src/gent_disagreement_processor/data/raw/deepgram/{base_name}.json"
         )
 
         segments = []

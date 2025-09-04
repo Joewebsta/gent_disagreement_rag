@@ -1,4 +1,14 @@
 from dataclasses import dataclass
+from typing import Optional
+
+
+@dataclass
+class Episode:
+    """Represents an episode with metadata."""
+
+    episode_number: str
+    title: Optional[str] = None
+    file_name: Optional[str] = None
 
 
 @dataclass
@@ -7,17 +17,4 @@ class SpeakerSegment:
 
     speaker: str
     text: str
-
-
-# @dataclass
-# class SpeakerSegment:
-#     """Represents a processed speaker segment with metadata."""
-
-#     speaker: str
-#     text: str
-#     type: str
-#     word_count: int
-#     length_category: str
-#     chunk_index: Optional[int] = None
-#     total_chunks: Optional[int] = None
-#     original_length: Optional[int] = None
+    episode_id: Optional[int] = None

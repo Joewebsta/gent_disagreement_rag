@@ -18,11 +18,14 @@ class VectorSearch:
 
             query_sql = """
                 SELECT
-                    speaker,
-                    text,
-                    1 - (embedding <=> %s::vector) as similarity
-                FROM transcript_segments
-                WHERE 1 - (embedding <=> %s::vector) > %s
+                    ts.speaker,
+                    ts.text,
+                    e.episode_number,
+                    e.title,
+                    1 - (ts.embedding <=> %s::vector) as similarity
+                FROM transcript_segments ts
+                JOIN episodes e ON ts.episode_id = e.id
+                WHERE 1 - (ts.embedding <=> %s::vector) > %s
                 ORDER BY similarity DESC
                 LIMIT %s
                 """
@@ -47,11 +50,15 @@ class VectorSearch:
             embedding = self.embedding_service.generate_embedding(query)
 
             query_sql = """
-                SELECT 
-                    speaker,
-                    text,
-                    1 - (embedding <=> %s::vector) as similarity
-                FROM transcript_segments
+                SELECT
+                    ts.speaker,
+                    ts.text,
+                    e.episode_number,
+                    e.title,
+                    e.date_published,
+                    1 - (ts.embedding <=> %s::vector) as similarity
+                FROM transcript_segments ts
+                JOIN episodes e ON ts.episode_id = e.id
                 ORDER BY similarity DESC
                 LIMIT %s
                 """

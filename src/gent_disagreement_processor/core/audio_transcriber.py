@@ -1,4 +1,6 @@
 import os
+import traceback
+from typing import Optional
 
 from deepgram import DeepgramClient, PrerecordedOptions
 from dotenv import load_dotenv
@@ -10,8 +12,15 @@ class AudioTranscriber:
     def __init__(self):
         load_dotenv()
 
-    def generate_transcript(self, file_name: str) -> str:
-        """Generate a transcript from a local audio file."""
+    def generate_transcript(self, file_name: str) -> Optional[str]:
+        """Generate a transcript from a local audio file.
+
+        Args:
+            file_name: Name of the audio file to transcribe
+
+        Returns:
+            Path to the saved transcript file on success, None on failure
+        """
         audio_file_path = f"src/gent_disagreement_processor/data/raw/audio/{file_name}"
 
         try:
@@ -27,8 +36,6 @@ class AudioTranscriber:
             options = PrerecordedOptions(
                 model="nova-3",
                 language="en",
-                # summarize="v2",
-                # topics=True,
                 smart_format=True,
                 punctuate=True,
                 paragraphs=True,
@@ -50,17 +57,16 @@ class AudioTranscriber:
 
             # Save the response json to the deepgram_transcripts directory
             # The file name should be the audio file name without the extension
-            file_name = audio_file_path.split("/")[-1].split(".")[0]
-            with open(
-                f"src/gent_disagreement_processor/data/raw/deepgram/{file_name}.json",
-                "w",
-            ) as f:
+            base_file_name = audio_file_path.split("/")[-1].split(".")[0]
+            output_path = f"src/gent_disagreement_processor/data/raw/deepgram/{base_file_name}.json"
+
+            with open(output_path, "w") as f:
                 f.write(response.to_json(indent=4))
 
             print("Transcription completed successfully!")
+            return output_path  # Return the path to the saved transcript
+
         except Exception as e:
             print(f"Exception: {e}")
-            import traceback
-
             traceback.print_exc()
-            return ""
+            return None  # Return None instead of empty string on failure

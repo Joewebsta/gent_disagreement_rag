@@ -39,6 +39,30 @@ class RAGService:
             print(f"Error in RAG service: {e}")
             raise e
 
+    def ask_question_with_context(self, question, model="gpt-4o-mini"):
+        """Implement RAG to answer questions and return both response and search results"""
+        try:
+            # 1. Find relevant transcript segments
+            search_results = self.vector_search.find_most_similar(
+                question, limit=self.DEFAULT_LIMIT
+            )
+
+            # 2. Format context from search results
+            formatted_results = self._format_search_results(search_results)
+
+            # 3. Create prompt with context
+            prompt = self._create_prompt(formatted_results, question)
+
+            # 4. Generate response
+            response = self._generate_response(prompt, model)
+
+            # 5. Return both response and search results
+            return response, search_results
+
+        except Exception as e:
+            print(f"Error in RAG service: {e}")
+            raise e
+
     def _generate_response(self, prompt, model):
         """Generate response using OpenAI LLM"""
         response = self.client.chat.completions.create(
@@ -55,6 +79,9 @@ class RAGService:
             formatted_result += f"Speaker: {result['speaker']}\n"
             formatted_result += f"Text: {result['text']}\n"
             formatted_result += f"Similarity: {result['similarity']}\n  "
+            formatted_result += f"Episode: {result['episode_number']}\n"
+            formatted_result += f"Title: {result['title']}\n"
+            formatted_result += f"Date Published: {result['date_published']}\n"
             formatted_result += f"--------------------------------\n"
 
         return formatted_result

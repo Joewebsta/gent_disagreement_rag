@@ -18,7 +18,28 @@ class ChatManager:
 
             print("Thinking...")
 
-            response = self.rag_service.ask_question(user_input)
-            print(f"Assistant: {response}")
+            # Get the search results and response
+            response, search_results = self.rag_service.ask_question_with_context(
+                user_input
+            )
 
+            # Display retrieved context
+            if search_results:
+                print("\n📚 Retrieved Context:")
+                print("=" * 50)
+                for i, result in enumerate(search_results, 1):
+                    confidence = result.get("similarity", 0)
+                    confidence_percentage = f"{confidence * 100:.1f}%"
+                    print(f"{i}. Speaker: {result['speaker']}")
+                    print(f"   Confidence: {confidence_percentage}")
+                    print(f"   Episode: {result['episode_number']}")
+                    print(f"   Title: {result['title']}")
+                    print(f"   Date Published: {result['date_published']}")
+                    print(
+                        f"   Text: {result['text'][:200]}{'...' if len(result['text']) > 200 else ''}"
+                    )
+                    print()
+                print("=" * 50)
+
+            print(f"Assistant: {response}")
             print("-" * 50)

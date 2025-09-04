@@ -46,24 +46,53 @@ class DatabaseManager:
         return psycopg2.connect(**self.connection_params)
 
     def setup_database(self):
-        """
-        Set up the database with required extensions and tables.
-        """
+        """Set up the database with required extensions and tables."""
         conn = self.get_connection()
         cur = conn.cursor()
 
         try:
             cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+
+            # Create episodes table
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS episodes (
+                    id SERIAL PRIMARY KEY,
+                    episode_number VARCHAR(20) NOT NULL UNIQUE,
+                    title TEXT,
+                    file_name VARCHAR(255),
+                    date_published DATE,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """
+            )
+
+            cur.execute(
+                """
+                INSERT INTO episodes (
+                    episode_number,
+                    title,
+                    file_name, 
+                    date_published
+                ) VALUES 
+                    ('180', 'A SCOTUS ''24-''25" term review with Professor Jack Beermann', 'AGD-180.mp3', '2025-08-12'),
+                    ('181', 'Six in Sixty: creeping authoritarianism', 'AGD-181.mp3', '2025-08-26');
+                """
+            )
+
+            # Create transcript_segments table with episode reference
             cur.execute(
                 """
                 CREATE TABLE IF NOT EXISTS transcript_segments (
                     id SERIAL PRIMARY KEY,
+                    episode_id INTEGER REFERENCES episodes(id),
                     speaker TEXT NOT NULL,
                     text TEXT NOT NULL,
                     embedding vector(1536)
                 );
             """
             )
+
             conn.commit()
             print("Database setup complete!")
         except Exception as e:
@@ -72,7 +101,9 @@ class DatabaseManager:
             cur.close()
             conn.close()
 
-    def insert_transcript_segment_with_embedding(self, speaker, text, embedding):
+    def insert_transcript_segment_with_embedding(
+        self, speaker, text, embedding, episode_id
+    ):
         """
         Insert a single transcript segment with its embedding into the database.
         """
@@ -81,8 +112,8 @@ class DatabaseManager:
 
         try:
             cursor.execute(
-                "INSERT INTO transcript_segments (speaker, text, embedding) VALUES (%s, %s, %s)",
-                (speaker, text, embedding),
+                "INSERT INTO transcript_segments (speaker, text, embedding, episode_id) VALUES (%s, %s, %s, %s)",
+                (speaker, text, embedding, episode_id),
             )
             conn.commit()
             print(f"Stored embedding for: {text[:50]}...")

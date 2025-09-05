@@ -1,5 +1,6 @@
 import os
 import traceback
+from pathlib import Path
 from typing import Optional
 
 from deepgram import DeepgramClient, PrerecordedOptions
@@ -12,9 +13,28 @@ class AudioTranscriber:
     def __init__(self):
         load_dotenv()
 
-        # Configuration - File paths
-        self.audio_dir = "src/gent_disagreement_processor/data/raw/audio"
-        self.output_dir = "src/gent_disagreement_processor/data/raw/transcripts"
+        # Configuration - File paths using pathlib
+        # Get the project root directory (4 levels up from this file)
+        project_root = Path(__file__).parent.parent.parent.parent
+        self.audio_dir = (
+            project_root
+            / "src"
+            / "gent_disagreement_processor"
+            / "data"
+            / "raw"
+            / "audio"
+        )
+        self.output_dir = (
+            project_root
+            / "src"
+            / "gent_disagreement_processor"
+            / "data"
+            / "raw"
+            / "transcripts"
+        )
+
+        # Ensure output directory exists
+        self.output_dir.mkdir(parents=True, exist_ok=True)
 
         # Configuration - Deepgram settings
         self.model = "nova-3"
@@ -38,7 +58,7 @@ class AudioTranscriber:
         Returns:
             Path to the saved transcript file on success, None on failure
         """
-        audio_file_path = os.path.join(self.audio_dir, file_name)
+        audio_file_path = self.audio_dir / file_name
 
         try:
             print(f"Starting transcription of: {file_name}")
@@ -51,7 +71,7 @@ class AudioTranscriber:
             print("Deepgram client created successfully")
 
             # Check if file exists
-            if not os.path.exists(audio_file_path):
+            if not audio_file_path.exists():
                 raise FileNotFoundError(f"Audio file not found: {audio_file_path}")
 
             # Read the local file and transcribe it
@@ -62,16 +82,16 @@ class AudioTranscriber:
                     self.transcription_options,
                 )
 
-            # Save the response json to the deepgram_transcripts directory
+            # Save the response json to the transcripts directory
             # The file name should be the audio file name without the extension
-            base_file_name = os.path.splitext(file_name)[0]
-            output_path = os.path.join(self.output_dir, f"{base_file_name}.json")
+            base_file_name = audio_file_path.stem  # Gets filename without extension
+            output_path = self.output_dir / f"{base_file_name}.json"
 
             with open(output_path, "w") as f:
                 f.write(response.to_json(indent=4))
 
             print("Transcription completed successfully!")
-            return output_path  # Return the path to the saved transcript
+            return str(output_path)  # Convert Path object to string for return
 
         except Exception as e:
             print(f"Exception: {e}")

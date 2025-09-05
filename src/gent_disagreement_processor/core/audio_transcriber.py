@@ -13,6 +13,9 @@ class AudioTranscriber:
     def __init__(self):
         load_dotenv()
 
+        # Load and validate API key once during initialization
+        self.api_key: str = self._load_and_validate_api_key()
+
         # Configuration - File paths using pathlib
         # Get the project root directory (4 levels up from this file)
         project_root: Path = Path(__file__).parent.parent.parent.parent
@@ -49,6 +52,29 @@ class AudioTranscriber:
             filler_words=False,
         )
 
+    def _load_and_validate_api_key(self) -> str:
+        """Load and validate the Deepgram API key from environment variables.
+
+        Returns:
+            str: Validated API key
+
+        Raises:
+            ValueError: If API key is not found or invalid
+        """
+        api_key: Optional[str] = os.getenv("DEEPGRAM_API_KEY")
+        if not api_key:
+            raise ValueError("DEEPGRAM_API_KEY not found in environment variables")
+
+        # Basic validation - API key should not be empty and should have reasonable length
+        api_key = api_key.strip()
+        if not api_key:
+            raise ValueError("DEEPGRAM_API_KEY is empty")
+
+        if len(api_key) < 10:
+            raise ValueError("DEEPGRAM_API_KEY appears to be invalid (too short)")
+
+        return api_key
+
     def _validate_audio_file(self, file_path: Path) -> None:
         """Validate that the audio file exists and is accessible.
 
@@ -70,15 +96,14 @@ class AudioTranscriber:
             Configured DeepgramClient instance
 
         Raises:
-            ValueError: If API key is not found
+            RuntimeError: If client creation fails
         """
-        api_key: Optional[str] = os.getenv("DEEPGRAM_API_KEY")
-        if not api_key:
-            raise ValueError("DEEPGRAM_API_KEY not found in environment variables")
-
-        client = DeepgramClient(api_key)
-        print("Deepgram client created successfully")
-        return client
+        try:
+            client = DeepgramClient(self.api_key)
+            print("Deepgram client created successfully")
+            return client
+        except Exception as e:
+            raise RuntimeError(f"Failed to create Deepgram client: {e}") from e
 
     def _transcribe_audio_file(
         self, client: DeepgramClient, audio_file_path: Path

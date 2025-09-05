@@ -21,7 +21,7 @@ def load_processed_segments(file_name=None) -> List[Dict[str, Any]]:
     base_name = file_name.rsplit(".", 1)[0] if "." in file_name else file_name
 
     file_path = Path(
-        f"src/gent_disagreement_processor/data/processed/deepgram/{base_name}.json"
+        f"src/gent_disagreement_processor/data/processed/transcripts/{base_name}.json"
     )
 
     if not file_path.exists():

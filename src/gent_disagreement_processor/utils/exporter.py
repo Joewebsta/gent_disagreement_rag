@@ -10,7 +10,7 @@ class DataExporter:
     def export_data(
         segments: List[Any],
         file_name: str = None,
-        output_dir: str = "src/gent_disagreement_processor/data/processed/deepgram/",
+        output_dir: str = "src/gent_disagreement_processor/data/processed/transcripts/",
     ) -> None:
         """Export processed data to JSON files."""
         # Ensure output directory exists

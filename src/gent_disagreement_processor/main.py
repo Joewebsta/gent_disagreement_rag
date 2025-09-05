@@ -1,5 +1,5 @@
 from gent_disagreement_processor.core import (
-    AudioTranscriptProcessor,
+    TranscriptFormatter,
     DatabaseManager,
     EmbeddingService,
     AudioTranscriber,
@@ -11,7 +11,7 @@ from gent_disagreement_processor.core import ChatManager
 def main():
     """Main execution function."""
 
-    # # Setup the database
+    # # # Setup the database
     # database_manager = DatabaseManager()
     # database_manager.setup_database()
 
@@ -27,9 +27,13 @@ def main():
     # It validates the audio file, creates a Deepgram client, transcribes the audio,
     # and saves the transcript as a JSON file
     audio_transcriber = AudioTranscriber()
-    audio_transcriber.generate_transcript(file_name)
+    raw_transcript_path = audio_transcriber.generate_transcript(file_name)
 
-    # # Generate embeddings
+    # Process the raw transcript
+    transcript_formatter = TranscriptFormatter()
+    transcript_formatter.process_transcript(raw_transcript_path)
+
+    # Generate embeddings
     # for episode in episodes:
     #     file_name = f"AGD-{episode['episode_number']}.mp3"
     #     episode_id = episode["episode_id"]

@@ -2,8 +2,8 @@ from ..utils import DataExporter
 from .formatter import DataFormatter
 
 
-class AudioTranscriptProcessor:
-    """Main orchestrator class that coordinates the entire processing pipeline."""
+class TranscriptFormatter:
+    """Formats raw transcript data into structured segments for further processing."""
 
     def __init__(self):
         self.formatter = DataFormatter()

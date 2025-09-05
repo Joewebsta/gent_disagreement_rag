@@ -16,25 +16,10 @@ class AudioTranscriber:
         # Load and validate API key once during initialization
         self.api_key: str = self._load_and_validate_api_key()
 
-        # Configuration - File paths using pathlib
-        # Get the project root directory (4 levels up from this file)
-        project_root: Path = Path(__file__).parent.parent.parent.parent
-        self.audio_dir: Path = (
-            project_root
-            / "src"
-            / "gent_disagreement_processor"
-            / "data"
-            / "raw"
-            / "audio"
-        )
-        self.output_dir: Path = (
-            project_root
-            / "src"
-            / "gent_disagreement_processor"
-            / "data"
-            / "raw"
-            / "transcripts"
-        )
+        self.audio_dir: Path = Path(os.getenv("AUDIO_TRANSCRIBER_AUDIO_DIR")).resolve()
+        self.output_dir: Path = Path(
+            os.getenv("AUDIO_TRANSCRIBER_OUTPUT_DIR")
+        ).resolve()
 
         # Ensure output directory exists
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -87,8 +72,6 @@ class AudioTranscriber:
         if not file_path.exists():
             raise FileNotFoundError(f"Audio file not found: {file_path}")
 
-        print(f"Audio file validation passed: {file_path}")
-
     def _create_deepgram_client(self) -> DeepgramClient:
         """Create and return a Deepgram client.
 
@@ -100,7 +83,6 @@ class AudioTranscriber:
         """
         try:
             client = DeepgramClient(self.api_key)
-            print("Deepgram client created successfully")
             return client
         except Exception as e:
             raise RuntimeError(f"Failed to create Deepgram client: {e}") from e
@@ -117,7 +99,7 @@ class AudioTranscriber:
         Returns:
             Deepgram API response object
         """
-        print(f"Transcribing file: {audio_file_path}")
+        print(f"Transcribing file...")
 
         with open(audio_file_path, "rb") as audio_file:
             response = client.listen.rest.v("1").transcribe_file(
@@ -125,7 +107,6 @@ class AudioTranscriber:
                 self.transcription_options,
             )
 
-        print("Transcription API call completed")
         return response
 
     def _save_transcript(self, response: Any, base_file_name: str) -> Path:
@@ -143,7 +124,6 @@ class AudioTranscriber:
         with open(output_path, "w") as f:
             f.write(response.to_json(indent=4))
 
-        print(f"Transcript saved to: {output_path}")
         return output_path
 
     def generate_transcript(self, file_name: str) -> Optional[str]:
@@ -173,7 +153,10 @@ class AudioTranscriber:
             base_file_name = audio_file_path.stem
             output_path = self._save_transcript(response, base_file_name)
 
-            print(f"Transcription completed successfully! Output: {output_path}")
+            print(f"Transcription completed successfully!")
+            print(
+                f"Transcript saved: {output_path.parent.parent.name}/{output_path.parent.name}/{output_path.name}"
+            )
             return str(output_path)
 
         except FileNotFoundError as e:

@@ -1,22 +1,22 @@
 import os
 import traceback
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from deepgram import DeepgramClient, PrerecordedOptions
 from dotenv import load_dotenv
 
 
 class AudioTranscriber:
-    """Handles transcript generation."""
+    """Handles transcript generation from audio files using Deepgram API."""
 
     def __init__(self):
         load_dotenv()
 
         # Configuration - File paths using pathlib
         # Get the project root directory (4 levels up from this file)
-        project_root = Path(__file__).parent.parent.parent.parent
-        self.audio_dir = (
+        project_root: Path = Path(__file__).parent.parent.parent.parent
+        self.audio_dir: Path = (
             project_root
             / "src"
             / "gent_disagreement_processor"
@@ -24,7 +24,7 @@ class AudioTranscriber:
             / "raw"
             / "audio"
         )
-        self.output_dir = (
+        self.output_dir: Path = (
             project_root
             / "src"
             / "gent_disagreement_processor"
@@ -37,9 +37,9 @@ class AudioTranscriber:
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         # Configuration - Deepgram settings
-        self.model = "nova-3"
-        self.language = "en"
-        self.transcription_options = PrerecordedOptions(
+        self.model: str = "nova-3"
+        self.language: str = "en"
+        self.transcription_options: PrerecordedOptions = PrerecordedOptions(
             model=self.model,
             language=self.language,
             smart_format=True,
@@ -53,7 +53,7 @@ class AudioTranscriber:
         """Validate that the audio file exists and is accessible.
 
         Args:
-            file_path: Path to the audio file
+            file_path (Path): Path to the audio file to validate
 
         Raises:
             FileNotFoundError: If file doesn't exist
@@ -72,7 +72,7 @@ class AudioTranscriber:
         Raises:
             ValueError: If API key is not found
         """
-        api_key = os.getenv("DEEPGRAM_API_KEY")
+        api_key: Optional[str] = os.getenv("DEEPGRAM_API_KEY")
         if not api_key:
             raise ValueError("DEEPGRAM_API_KEY not found in environment variables")
 
@@ -82,7 +82,7 @@ class AudioTranscriber:
 
     def _transcribe_audio_file(
         self, client: DeepgramClient, audio_file_path: Path
-    ) -> any:
+    ) -> Any:
         """Transcribe the audio file using Deepgram API.
 
         Args:
@@ -103,7 +103,7 @@ class AudioTranscriber:
         print("Transcription API call completed")
         return response
 
-    def _save_transcript(self, response: any, base_file_name: str) -> Path:
+    def _save_transcript(self, response: Any, base_file_name: str) -> Path:
         """Save the transcript response to a JSON file.
 
         Args:
@@ -113,7 +113,7 @@ class AudioTranscriber:
         Returns:
             Path to the saved transcript file
         """
-        output_path = self.output_dir / f"{base_file_name}.json"
+        output_path: Path = self.output_dir / f"{base_file_name}.json"
 
         with open(output_path, "w") as f:
             f.write(response.to_json(indent=4))

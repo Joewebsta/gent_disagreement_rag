@@ -11,35 +11,36 @@ from gent_disagreement_processor.core import ChatManager
 def main():
     """Main execution function."""
 
-    episodes = [
-        {"episode_number": 180, "file_name": "AGD-180.mp3", "episode_id": 1},
-        {"episode_number": 181, "file_name": "AGD-181.mp3", "episode_id": 2},
-    ]
+    # # Setup the database
+    # database_manager = DatabaseManager()
+    # database_manager.setup_database()
+
+    # episodes = [
+    #     {"episode_number": 180, "file_name": "AGD-180.mp3", "episode_id": 1},
+    #     {"episode_number": 181, "file_name": "AGD-181.mp3", "episode_id": 2},
+    # ]
+
+    file_name = "AGD-180-7.m4a"
 
     # Transcribe audio file
+    # AudioTranscriber handles transcription of audio files using Deepgram's API
+    # It validates the audio file, creates a Deepgram client, transcribes the audio,
+    # and saves the transcript as a JSON file
     audio_transcriber = AudioTranscriber()
     audio_transcriber.generate_transcript(file_name)
 
-    # Process the raw transcript
-    processor = AudioTranscriptProcessor()
-    processor.process_transcript(file_name)
+    # # Generate embeddings
+    # for episode in episodes:
+    #     file_name = f"AGD-{episode['episode_number']}.mp3"
+    #     episode_id = episode["episode_id"]
 
-    # Setup the database
-    database_manager = DatabaseManager()
-    database_manager.setup_database()
+    #     segments = load_processed_segments(file_name)
+    #     embedding_service = EmbeddingService()
+    #     embedding_service.generate_and_store_embeddings(segments, episode_id)
 
-    # Generate embeddings
-    for episode in episodes:
-        file_name = f"AGD-{episode['episode_number']}.mp3"
-        episode_id = episode["episode_id"]
-
-        segments = load_processed_segments(file_name)
-        embedding_service = EmbeddingService()
-        embedding_service.generate_and_store_embeddings(segments, episode_id)
-
-    # Run the chatbot
-    chat_manager = ChatManager()
-    chat_manager.run()
+    # # Run the chatbot
+    # chat_manager = ChatManager()
+    # chat_manager.run()
 
 
 # poetry run python src/gent_disagreement_processor/main.py

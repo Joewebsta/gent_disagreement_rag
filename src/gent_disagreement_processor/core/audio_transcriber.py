@@ -126,7 +126,7 @@ class AudioTranscriber:
 
         return output_path
 
-    def generate_transcript(self, file_name: str) -> Optional[str]:
+    def generate_transcript(self, file_name: str) -> Optional[Path]:
         """Generate a transcript from a local audio file.
 
         Args:
@@ -157,7 +157,7 @@ class AudioTranscriber:
             print(
                 f"Transcript saved: {output_path.parent.parent.name}/{output_path.parent.name}/{output_path.name}"
             )
-            return str(output_path)
+            return output_path
 
         except FileNotFoundError as e:
             print(f"File not found: {e}")

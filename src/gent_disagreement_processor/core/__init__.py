@@ -1,4 +1,4 @@
-from .processor import TranscriptFormatter
+from .transcript_fomatter import TranscriptFormatter
 from .transcript_exporter import TranscriptExporter
 from .database_manager import DatabaseManager
 from .embedding_service import EmbeddingService

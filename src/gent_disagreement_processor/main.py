@@ -17,12 +17,12 @@ def main():
     # database_manager = DatabaseManager()
     # database_manager.setup_database()
 
-    # episodes = [
-    #     {"episode_number": 180, "file_name": "AGD-180.mp3", "episode_id": 1},
-    #     {"episode_number": 181, "file_name": "AGD-181.mp3", "episode_id": 2},
-    # ]
+    episodes = [
+        {"episode_number": 180, "episode_id": 1},
+        # {"episode_number": 181, "episode_id": 2},
+    ]
 
-    file_name = "AGD-180-7.m4a"
+    # file_name = "AGD-180-7.m4a"
 
     # # Transcribe audio file
     # # AudioTranscriber handles transcription of audio files using Deepgram's API
@@ -35,7 +35,7 @@ def main():
 
     # Process the raw transcript with separated concerns
     raw_transcript_path = Path(
-        "/Users/jwebster/Home/Code/projects/2025-projects/!Starred/gent_disagreement_processor/src/gent_disagreement_processor/data/raw/transcripts/AGD-180-7.json"
+        "./src/gent_disagreement_processor/data/raw/transcripts/AGD-180-7.json"
     )
 
     # Separate formatting and exporting
@@ -46,18 +46,19 @@ def main():
     formatted_segments = formatter.format_segments(raw_transcript_path)
 
     # Export the formatted data
-    output_path = exporter.export_segments(formatted_segments, raw_transcript_path.stem)
+    processed_transcript_path = exporter.export_segments(
+        formatted_segments, raw_transcript_path.stem
+    )
 
     # Generate embeddings
-    # for episode in episodes:
-    #     file_name = f"AGD-{episode['episode_number']}.mp3"
-    #     episode_id = episode["episode_id"]
+    for episode in episodes:
+        episode_id = episode["episode_id"]
 
-    #     segments = load_processed_segments(file_name)
-    #     embedding_service = EmbeddingService()
-    #     embedding_service.generate_and_store_embeddings(segments, episode_id)
+        segments = load_processed_segments(processed_transcript_path)
+        embedding_service = EmbeddingService()
+        embedding_service.generate_and_store_embeddings(segments, episode_id)
 
-    # # Run the chatbot
+    # # # Run the chatbot
     # chat_manager = ChatManager()
     # chat_manager.run()
 

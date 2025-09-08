@@ -1,11 +1,13 @@
 from gent_disagreement_processor.core import (
     TranscriptFormatter,
+    TranscriptExporter,
     DatabaseManager,
     EmbeddingService,
     AudioTranscriber,
 )
 from gent_disagreement_processor.utils import load_processed_segments
 from gent_disagreement_processor.core import ChatManager
+from pathlib import Path
 
 
 def main():
@@ -22,16 +24,29 @@ def main():
 
     file_name = "AGD-180-7.m4a"
 
-    # Transcribe audio file
-    # AudioTranscriber handles transcription of audio files using Deepgram's API
-    # It validates the audio file, creates a Deepgram client, transcribes the audio,
-    # and saves the transcript as a JSON file
-    audio_transcriber = AudioTranscriber()
-    raw_transcript_path = audio_transcriber.generate_transcript(file_name)
+    # # Transcribe audio file
+    # # AudioTranscriber handles transcription of audio files using Deepgram's API
+    # # It validates the audio file, creates a Deepgram client, transcribes the audio,
+    # # and saves the transcript as a JSON file
+    # audio_transcriber = AudioTranscriber()
+    # raw_transcript_path = audio_transcriber.generate_transcript(file_name)
 
-    # Process the raw transcript
-    transcript_formatter = TranscriptFormatter()
-    transcript_formatter.process_transcript(raw_transcript_path)
+    # print("raw_transcript_path", raw_transcript_path)
+
+    # Process the raw transcript with separated concerns
+    raw_transcript_path = Path(
+        "/Users/jwebster/Home/Code/projects/2025-projects/!Starred/gent_disagreement_processor/src/gent_disagreement_processor/data/raw/transcripts/AGD-180-7.json"
+    )
+
+    # Separate formatting and exporting
+    formatter = TranscriptFormatter()
+    exporter = TranscriptExporter()
+
+    # Format the transcript data
+    formatted_segments = formatter.format_segments(raw_transcript_path)
+
+    # Export the formatted data
+    output_path = exporter.export_segments(formatted_segments, raw_transcript_path.stem)
 
     # Generate embeddings
     # for episode in episodes:

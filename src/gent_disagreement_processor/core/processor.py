@@ -1,23 +1,12 @@
 import json
-import os
 from pathlib import Path
-from typing import List, Dict, Any
-
-from .normalizer import TextNormalizer
+from typing import List, Dict
 
 
 class TranscriptFormatter:
     """Formats raw transcript data into structured segments for further processing."""
 
-    def __init__(self):
-        self.normalizer = TextNormalizer()
-
-    def process_transcript(self, transcript_path: Path) -> None:
-        """Process the raw transcript data and export formatted segments to JSON file."""
-        formatted_segments = self._format_segments(transcript_path)
-        self._export_segments(formatted_segments, transcript_path)
-
-    def _format_segments(self, transcript_path: Path) -> List[Dict[str, str]]:
+    def format_segments(self, transcript_path: Path) -> List[Dict[str, str]]:
         """Format raw transcript data into structured segments."""
 
         segments = []
@@ -65,21 +54,3 @@ class TranscriptFormatter:
                 )
 
         return segments
-
-    def _export_segments(self, segments: List[Dict[str, str]], file_name: Path) -> None:
-        """Export formatted segments to JSON file."""
-        output_dir = "src/gent_disagreement_processor/data/processed/transcripts/"
-
-        # Ensure output directory exists
-        os.makedirs(output_dir, exist_ok=True)
-
-        # Extract just the filename from the full path
-        filename = os.path.basename(file_name)
-        base_name = filename.rsplit(".", 1)[0] if "." in filename else filename
-
-        # Save segments to JSON file
-        output_file = os.path.join(output_dir, f"{base_name}.json")
-        with open(output_file, "w") as f:
-            json.dump(segments, f, indent=2)
-
-        print(f"Exported {len(segments)} segments to {output_file}")

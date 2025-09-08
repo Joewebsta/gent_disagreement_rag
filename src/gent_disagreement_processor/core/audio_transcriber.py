@@ -16,10 +16,11 @@ class AudioTranscriber:
         # Load and validate API key once during initialization
         self.api_key: str = self._load_and_validate_api_key()
 
-        self.audio_dir: Path = Path(os.getenv("AUDIO_TRANSCRIBER_AUDIO_DIR")).resolve()
-        self.output_dir: Path = Path(
-            os.getenv("AUDIO_TRANSCRIBER_OUTPUT_DIR")
-        ).resolve()
+        audio_dir = os.getenv("AUDIO_TRANSCRIBER_AUDIO_DIR")
+        self.audio_dir: Path = Path(audio_dir).resolve()
+
+        output_dir = os.getenv("AUDIO_TRANSCRIBER_OUTPUT_DIR")
+        self.output_dir: Path = Path(output_dir).resolve()
 
         # Ensure output directory exists
         self.output_dir.mkdir(parents=True, exist_ok=True)

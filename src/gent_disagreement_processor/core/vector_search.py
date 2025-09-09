@@ -7,7 +7,7 @@ class VectorSearch:
 
     def __init__(self, database_name="gent_disagreement"):
         self.db_manager = DatabaseManager(database=database_name)
-        self.embedding_service = EmbeddingService(self.db_manager)
+        self.embedding_service = EmbeddingService()
 
     def search_similar_transcript_segments(
         self, query, limit=5, similarity_threshold=0.4

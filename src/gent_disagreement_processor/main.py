@@ -10,7 +10,6 @@ To reset the database (WARNING: deletes all data):
 
 from gent_disagreement_processor.core import (
     AudioTranscriber,
-    ChatManager,
     DatabaseManager,
     EmbeddingService,
     TranscriptExporter,
@@ -41,8 +40,8 @@ def main():
     embedding_service = EmbeddingService()
 
     episodes = [
-        {"episode_id": 1, "file_name": "AGD-180.mp3"},
-        {"episode_id": 2, "file_name": "AGD-181.mp3"},
+        # {"episode_id": 1, "file_name": "AGD-180.mp3"},
+        # {"episode_id": 2, "file_name": "AGD-181.mp3"},
         {"episode_id": 3, "file_name": "AGD-182-7.m4a"},
     ]
 
@@ -67,10 +66,6 @@ def main():
 
         # Store the embeddings in the database
         database_manager.store_embeddings(embeddings, episode_id)
-
-    # # # Run the chatbot
-    # chat_manager = ChatManager()
-    # chat_manager.run()
 
 
 # poetry run python src/gent_disagreement_processor/main.py

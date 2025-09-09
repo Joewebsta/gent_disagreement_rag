@@ -1,3 +1,13 @@
+"""
+Main application for gent_disagreement_processor.
+
+Before running this application, ensure the database is set up by running:
+    poetry run seed-db
+
+To reset the database (WARNING: deletes all data):
+    poetry run reset-db
+"""
+
 from gent_disagreement_processor.core import (
     AudioTranscriber,
     ChatManager,
@@ -12,9 +22,17 @@ from gent_disagreement_processor.utils import load_processed_segments
 def main():
     """Main execution function."""
 
-    # Setup the database
+    # Initialize database manager (assumes database is already set up via scripts)
     database_manager = DatabaseManager()
-    database_manager.setup_database()
+
+    # Verify database connection
+    try:
+        database_manager.get_connection().close()
+    except Exception as e:
+        print("❌ Database connection failed!")
+        print("Please run 'poetry run seed-db' to set up the database first.")
+        print(f"Error: {e}")
+        return
 
     # Initialize services
     audio_transcriber = AudioTranscriber()

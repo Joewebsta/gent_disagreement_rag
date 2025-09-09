@@ -123,6 +123,37 @@ class DatabaseManager:
             cursor.close()
             conn.close()
 
+    def store_embeddings(self, embeddings, episode_id):
+        """
+        Store a list of embeddings with their associated segment data into the database.
+
+        Args:
+            embeddings: List of dictionaries containing 'speaker', 'text', and 'embedding' keys
+            episode_id: The episode ID to associate with these embeddings
+        """
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        try:
+            for embedding_data in embeddings:
+                cursor.execute(
+                    "INSERT INTO transcript_segments (speaker, text, embedding, episode_id) VALUES (%s, %s, %s, %s)",
+                    (
+                        embedding_data["speaker"],
+                        embedding_data["text"],
+                        embedding_data["embedding"],
+                        episode_id,
+                    ),
+                )
+            conn.commit()
+            print(f"Stored {len(embeddings)} embeddings successfully!")
+        except Exception as e:
+            print("Error storing embeddings:", e)
+            raise
+        finally:
+            cursor.close()
+            conn.close()
+
     def execute_query(self, query, params=None):
         """
         Execute a query with optional parameters.

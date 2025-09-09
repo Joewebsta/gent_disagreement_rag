@@ -3,16 +3,13 @@ from typing import List, Dict, Any
 from openai import OpenAI
 from dotenv import load_dotenv
 
-from .database_manager import DatabaseManager
-
 
 class EmbeddingService:
-    """Handles embedding generation and storage for transcript segments."""
+    """Handles embedding generation for transcript segments."""
 
-    def __init__(self, database_manager=None):
+    def __init__(self):
         load_dotenv()
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.database_manager = database_manager or DatabaseManager()
 
     def generate_embedding(self, text: str) -> List[float]:
         """Generate a single embedding for the given text."""
@@ -21,17 +18,23 @@ class EmbeddingService:
         )
         return response.data[0].embedding
 
-    def generate_and_store_embeddings(
-        self, segments: List[Dict[str, Any]], episode_id: int
-    ) -> None:
-        """Generate embeddings for all segments and store them in the database."""
+    def generate_embeddings(
+        self, segments: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """Generate embeddings for all segments and return them with segment data."""
         try:
+            embeddings = []
             for segment in segments:
                 embedding = self.generate_embedding(segment["text"])
-                self.database_manager.insert_transcript_segment_with_embedding(
-                    segment["speaker"], segment["text"], embedding, episode_id
+                embeddings.append(
+                    {
+                        "speaker": segment["speaker"],
+                        "text": segment["text"],
+                        "embedding": embedding,
+                    }
                 )
-            print("All embeddings stored successfully!")
+            print("All embeddings generated successfully!")
+            return embeddings
         except Exception as e:
             print("Error generating embeddings:", e)
             raise

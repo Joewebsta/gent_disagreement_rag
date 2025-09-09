@@ -16,6 +16,12 @@ def main():
     database_manager = DatabaseManager()
     database_manager.setup_database()
 
+    # Initialize services
+    audio_transcriber = AudioTranscriber()
+    formatter = TranscriptFormatter()
+    exporter = TranscriptExporter()
+    embedding_service = EmbeddingService()
+
     episodes = [
         {"episode_id": 1, "file_name": "AGD-180.mp3"},
         {"episode_id": 2, "file_name": "AGD-181.mp3"},
@@ -23,26 +29,22 @@ def main():
     ]
 
     for episode in episodes:
-        episode_id = episode["episode_id"]
         file_name = episode["file_name"]
+        episode_id = episode["episode_id"]
 
         # Transcribe audio file
-        audio_transcriber = AudioTranscriber()
         raw_transcript_path = audio_transcriber.generate_transcript(file_name)
 
         # Format the transcript data
-        formatter = TranscriptFormatter()
         formatted_segments = formatter.format_segments(raw_transcript_path)
 
         # Export the formatted data
-        exporter = TranscriptExporter()
         processed_transcript_path = exporter.export_segments(
             formatted_segments, raw_transcript_path.stem
         )
 
         # Generate embeddings
         segments = load_processed_segments(processed_transcript_path)
-        embedding_service = EmbeddingService()
         embeddings = embedding_service.generate_embeddings(segments)
 
         # Store the embeddings in the database

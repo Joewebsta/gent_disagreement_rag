@@ -1,51 +1,39 @@
 from gent_disagreement_processor.core import (
-    TranscriptFormatter,
-    TranscriptExporter,
+    AudioTranscriber,
+    ChatManager,
     DatabaseManager,
     EmbeddingService,
-    AudioTranscriber,
+    TranscriptExporter,
+    TranscriptFormatter,
 )
 from gent_disagreement_processor.utils import load_processed_segments
-from gent_disagreement_processor.core import ChatManager
-from pathlib import Path
 
 
 def main():
     """Main execution function."""
 
-    # # # Setup the database
-    # database_manager = DatabaseManager()
-    # database_manager.setup_database()
+    # Setup the database
+    database_manager = DatabaseManager()
+    database_manager.setup_database()
 
     episodes = [
-        {"episode_number": 180, "episode_id": 1},
-        # {"episode_number": 181, "episode_id": 2},
+        {"episode_number": 180, "episode_id": 1, "file_name": "AGD-180.mp3"},
+        {"episode_number": 181, "episode_id": 2, "file_name": "AGD-181.mp3"},
+        {"episode_number": 182, "episode_id": 3, "file_name": "AGD-182-7.m4a"},
     ]
 
-    # file_name = "AGD-180-7.m4a"
-
     # # Transcribe audio file
-    # # AudioTranscriber handles transcription of audio files using Deepgram's API
-    # # It validates the audio file, creates a Deepgram client, transcribes the audio,
-    # # and saves the transcript as a JSON file
-    # audio_transcriber = AudioTranscriber()
-    # raw_transcript_path = audio_transcriber.generate_transcript(file_name)
-
-    # print("raw_transcript_path", raw_transcript_path)
-
-    # Process the raw transcript with separated concerns
-    raw_transcript_path = Path(
-        "./src/gent_disagreement_processor/data/raw/transcripts/AGD-180-7.json"
+    audio_transcriber = AudioTranscriber()
+    raw_transcript_path = audio_transcriber.generate_transcript(
+        episodes[2]["file_name"]
     )
 
-    # Separate formatting and exporting
-    formatter = TranscriptFormatter()
-    exporter = TranscriptExporter()
-
     # Format the transcript data
+    formatter = TranscriptFormatter()
     formatted_segments = formatter.format_segments(raw_transcript_path)
 
     # Export the formatted data
+    exporter = TranscriptExporter()
     processed_transcript_path = exporter.export_segments(
         formatted_segments, raw_transcript_path.stem
     )
@@ -58,9 +46,9 @@ def main():
         embedding_service = EmbeddingService()
         embedding_service.generate_and_store_embeddings(segments, episode_id)
 
-    # # # Run the chatbot
-    # chat_manager = ChatManager()
-    # chat_manager.run()
+    # # Run the chatbot
+    chat_manager = ChatManager()
+    chat_manager.run()
 
 
 # poetry run python src/gent_disagreement_processor/main.py

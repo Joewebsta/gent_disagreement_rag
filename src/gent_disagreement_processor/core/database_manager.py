@@ -81,24 +81,3 @@ class DatabaseManager:
         finally:
             cursor.close()
             conn.close()
-
-    def execute_query(self, query: str, params: Optional[tuple] = None) -> List[dict]:
-        """
-        Execute a query with optional parameters.
-        """
-        cursor = None
-        conn = None
-        try:
-            conn = self.get_connection()
-            cursor = conn.cursor(cursor_factory=RealDictCursor)
-            cursor.execute(query, params)
-            results = cursor.fetchall()
-            return results
-        except Exception as e:
-            self.logger.error(f"Error executing query: {e}")
-            raise e
-        finally:
-            if cursor:
-                cursor.close()
-            if conn:
-                conn.close()

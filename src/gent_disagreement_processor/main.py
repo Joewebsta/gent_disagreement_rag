@@ -40,9 +40,9 @@ def main():
     embedding_service = EmbeddingService()
 
     episodes = [
-        # {"episode_id": 1, "file_name": "AGD-180.mp3"},
-        # {"episode_id": 2, "file_name": "AGD-181.mp3"},
-        {"episode_id": 3, "file_name": "AGD-182-7.m4a"},
+        {"episode_id": 1, "file_name": "AGD-180.mp3"},
+        {"episode_id": 2, "file_name": "AGD-181.mp3"},
+        {"episode_id": 3, "file_name": "AGD-182.mp3"},
     ]
 
     for episode in episodes:

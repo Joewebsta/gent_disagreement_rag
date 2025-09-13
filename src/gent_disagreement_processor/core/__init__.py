@@ -2,7 +2,6 @@ from .transcript_fomatter import TranscriptFormatter
 from .transcript_exporter import TranscriptExporter
 from .database_manager import DatabaseManager
 from .embedding_service import EmbeddingService
-from .rag_service import RAGService
 from .audio_transcriber import AudioTranscriber
 
 __all__ = [

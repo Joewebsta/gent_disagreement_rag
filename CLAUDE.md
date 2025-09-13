@@ -48,8 +48,6 @@ The application follows a modular service-oriented design with these key compone
 - **TranscriptExporter**: Exports formatted segments to JSON files
 - **DatabaseManager**: Manages PostgreSQL connections and pgvector storage
 - **EmbeddingService**: Generates text embeddings via OpenAI API
-- **RAGService**: Performs vector similarity search for retrieval
-- **VectorSearch**: Queries embeddings from the database
 
 ### Data Flow
 

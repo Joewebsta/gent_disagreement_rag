@@ -68,7 +68,5 @@ def main():
         database_manager.store_embeddings(embeddings, episode_id)
 
 
-# poetry run python src/gent_disagreement_processor/main.py
-
 if __name__ == "__main__":
     main()

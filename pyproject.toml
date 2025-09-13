@@ -17,6 +17,13 @@ deepgram-sdk = "^4.8.1"
 seed-db = "scripts.seed_database:main"
 reset-db = "scripts.reset_database:main"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.2"
+pytest-mock = "^3.15.0"
+pytest-asyncio = "^1.2.0"
+pytest-cov = "^7.0.0"
+faker = "^37.6.0"
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"

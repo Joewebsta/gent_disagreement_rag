@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "transaction_key": "deprecated",
+    "request_id": "sample-request-id",
+    "sha256": "sample_sha256_hash",
+    "created": "2025-01-15T10:00:00.000Z",
+    "duration": 180.5,
+    "channels": 1
+  },
+  "results": {
+    "channels": [
+      {
+        "alternatives": [
+          {
+            "transcript": "Hello everyone and welcome back to A Gentleman's Disagreement. I'm Ricky Ghoshroy and I'm joined today by Brendan Kelly. How are you doing today Brendan? I'm doing great Ricky, thanks for having me on the show again. It's always a pleasure to discuss these fascinating topics with you.",
+            "confidence": 0.9876,
+            "paragraphs": {
+              "transcript": "Hello everyone and welcome back to A Gentleman's Disagreement. I'm Ricky Ghoshroy and I'm joined today by Brendan Kelly. How are you doing today Brendan? I'm doing great Ricky, thanks for having me on the show again. It's always a pleasure to discuss these fascinating topics with you.",
+              "paragraphs": [
+                {
+                  "sentences": [
+                    {
+                      "text": "Hello everyone and welcome back to A Gentleman's Disagreement.",
+                      "start": 0.0,
+                      "end": 3.8
+                    },
+                    {
+                      "text": "I'm Ricky Ghoshroy and I'm joined today by Brendan Kelly.",
+                      "start": 4.0,
+                      "end": 7.2
+                    },
+                    {
+                      "text": "How are you doing today Brendan?",
+                      "start": 7.5,
+                      "end": 9.1
+                    }
+                  ],
+                  "start": 0.0,
+                  "end": 9.1,
+                  "num_words": 22,
+                  "speaker": "0"
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I'm doing great Ricky, thanks for having me on the show again.",
+                      "start": 9.5,
+                      "end": 12.8
+                    },
+                    {
+                      "text": "It's always a pleasure to discuss these fascinating topics with you.",
+                      "start": 13.0,
+                      "end": 16.5
+                    }
+                  ],
+                  "start": 9.5,
+                  "end": 16.5,
+                  "num_words": 24,
+                  "speaker": "1"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -4,7 +4,9 @@
       "Bash(poetry --version)",
       "Bash(poetry show:*)",
       "Bash(poetry run python -m pytest:*)",
-      "Bash(poetry run python:*)"
+      "Bash(poetry run python:*)",
+      "Bash(poetry add:*)",
+      "Bash(poetry run pytest:*)"
     ],
     "deny": []
   }

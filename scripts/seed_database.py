@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Database seeding script for gent_disagreement_processor.
+Database seeding script for gent_disagreement_rag.
 
 This script sets up the database schema and seeds it with initial data.
 It can be run independently of the main application.
@@ -14,7 +14,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "src"))
 
-from gent_disagreement_processor.core.database_manager import DatabaseManager
+from gent_disagreement_rag.core.database_manager import DatabaseManager
 
 
 def setup_logging() -> None:

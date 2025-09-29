@@ -4,7 +4,7 @@ import pytest
 import json
 from pathlib import Path
 from unittest.mock import patch, mock_open, MagicMock
-from gent_disagreement_processor.core import AudioTranscriber
+from gent_disagreement_rag.core import AudioTranscriber
 
 
 class TestAudioTranscriber:
@@ -60,7 +60,7 @@ class TestAudioTranscriber:
 
     # ===== INITIALIZATION TESTS =====
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     def test_initialization_success(self, mock_load_dotenv, valid_env_vars):
         """Test successful AudioTranscriber initialization."""
         transcriber = AudioTranscriber()
@@ -72,7 +72,7 @@ class TestAudioTranscriber:
         assert transcriber.output_dir == valid_env_vars["output_dir"]
         mock_load_dotenv.assert_called_once()
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     def test_initialization_creates_output_directory(
         self, mock_load_dotenv, monkeypatch, tmp_path
     ):
@@ -92,7 +92,7 @@ class TestAudioTranscriber:
 
     # ===== API KEY VALIDATION TESTS =====
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     def test_missing_api_key_raises_error(
         self, mock_load_dotenv, monkeypatch, tmp_path
     ):
@@ -111,7 +111,7 @@ class TestAudioTranscriber:
         ):
             AudioTranscriber()
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     def test_empty_api_key_raises_error(self, mock_load_dotenv, monkeypatch, tmp_path):
         """Test that empty API key raises ValueError."""
         audio_dir = tmp_path / "audio"
@@ -126,7 +126,7 @@ class TestAudioTranscriber:
         with pytest.raises(ValueError, match="DEEPGRAM_API_KEY is empty"):
             AudioTranscriber()
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     def test_short_api_key_raises_error(self, mock_load_dotenv, monkeypatch, tmp_path):
         """Test that too-short API key raises ValueError."""
         audio_dir = tmp_path / "audio"
@@ -145,7 +145,7 @@ class TestAudioTranscriber:
 
     # ===== FILE VALIDATION TESTS =====
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     def test_validate_audio_file_exists(self, mock_load_dotenv, valid_env_vars):
         """Test file validation passes when file exists."""
         transcriber = AudioTranscriber()
@@ -157,7 +157,7 @@ class TestAudioTranscriber:
         # Should not raise any exception
         transcriber._validate_audio_file(test_audio_file)
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     def test_validate_audio_file_not_found(self, mock_load_dotenv, valid_env_vars):
         """Test file validation raises error when file doesn't exist."""
         transcriber = AudioTranscriber()
@@ -169,8 +169,8 @@ class TestAudioTranscriber:
 
     # ===== DEEPGRAM CLIENT CREATION TESTS =====
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
-    @patch("gent_disagreement_processor.core.audio_transcriber.DeepgramClient")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.DeepgramClient")
     def test_create_deepgram_client_success(
         self, mock_deepgram_client, mock_load_dotenv, valid_env_vars
     ):
@@ -184,8 +184,8 @@ class TestAudioTranscriber:
         mock_deepgram_client.assert_called_with("valid-api-key-1234567890")
         assert client == mock_client_instance
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
-    @patch("gent_disagreement_processor.core.audio_transcriber.DeepgramClient")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.DeepgramClient")
     def test_create_deepgram_client_failure(
         self, mock_deepgram_client, mock_load_dotenv, valid_env_vars
     ):
@@ -199,7 +199,7 @@ class TestAudioTranscriber:
 
     # ===== AUDIO TRANSCRIPTION TESTS =====
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     @patch("builtins.open", new_callable=mock_open, read_data=b"fake audio content")
     def test_transcribe_audio_file_success(
         self, mock_file_open, mock_load_dotenv, valid_env_vars, mock_deepgram_response
@@ -225,7 +225,7 @@ class TestAudioTranscriber:
 
     # ===== TRANSCRIPT SAVING TESTS =====
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     @patch("builtins.open", new_callable=mock_open)
     def test_save_transcript_success(
         self, mock_file_open, mock_load_dotenv, valid_env_vars, mock_deepgram_response
@@ -248,8 +248,8 @@ class TestAudioTranscriber:
 
     # ===== INTEGRATION TESTS (generate_transcript) =====
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
-    @patch("gent_disagreement_processor.core.audio_transcriber.DeepgramClient")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.DeepgramClient")
     @patch("builtins.open", new_callable=mock_open, read_data=b"fake audio content")
     def test_generate_transcript_complete_success(
         self,
@@ -278,7 +278,7 @@ class TestAudioTranscriber:
         expected_output = valid_env_vars["output_dir"] / "test.json"
         assert result == expected_output
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     def test_generate_transcript_file_not_found(self, mock_load_dotenv, valid_env_vars):
         """Test generate_transcript handles missing audio file gracefully."""
         transcriber = AudioTranscriber()
@@ -287,8 +287,8 @@ class TestAudioTranscriber:
 
         assert result is None
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
-    @patch("gent_disagreement_processor.core.audio_transcriber.DeepgramClient")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.DeepgramClient")
     def test_generate_transcript_client_creation_failure(
         self, mock_deepgram_client, mock_load_dotenv, valid_env_vars
     ):
@@ -304,8 +304,8 @@ class TestAudioTranscriber:
 
         assert result is None
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
-    @patch("gent_disagreement_processor.core.audio_transcriber.DeepgramClient")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.DeepgramClient")
     @patch("builtins.open", new_callable=mock_open, read_data=b"fake audio content")
     def test_generate_transcript_api_failure(
         self, mock_file_open, mock_deepgram_client, mock_load_dotenv, valid_env_vars
@@ -327,8 +327,8 @@ class TestAudioTranscriber:
 
         assert result is None
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
-    @patch("gent_disagreement_processor.core.audio_transcriber.DeepgramClient")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.DeepgramClient")
     @patch("builtins.open", new_callable=mock_open, read_data=b"fake audio content")
     def test_generate_transcript_save_failure(
         self,
@@ -365,7 +365,7 @@ class TestAudioTranscriber:
 
     # ===== CONFIGURATION TESTS =====
 
-    @patch("gent_disagreement_processor.core.audio_transcriber.load_dotenv")
+    @patch("gent_disagreement_rag.core.audio_transcriber.load_dotenv")
     def test_transcription_options_configuration(
         self, mock_load_dotenv, valid_env_vars
     ):

@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "gent-disagreement-processor"
+name = "gent-disagreement-rag"
 version = "0.1.0"
 description = ""
 authors = ["Joe Webster <joseph.scott.webster@gmail.com>"]
 readme = "README.md"
-packages = [{include = "gent_disagreement_processor", from = "src"}]
+packages = [{include = "gent_disagreement_rag", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<4.0"

@@ -16,7 +16,7 @@ poetry run reset-db
 ### Running the Application
 ```bash
 # Main application
-poetry run python src/gent_disagreement_processor/main.py
+poetry run python src/gent_disagreement_rag/main.py
 ```
 
 ### Dependency Management
@@ -59,7 +59,7 @@ The application follows a modular service-oriented design with these key compone
 
 ### Directory Structure
 
-- `src/gent_disagreement_processor/`
+- `src/gent_disagreement_rag/`
   - `core/`: Service classes (transcription, embeddings, database)
   - `models/`: Data models (segments, summaries)
   - `utils/`: Helper functions (data loading)

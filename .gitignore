@@ -51,16 +51,16 @@ env/
 logs/
 
 # Audio
-src/gent_disagreement_processor/data/raw/audio/
+src/gent_disagreement_rag/data/raw/audio/
 
 # Transcripts
-src/gent_disagreement_processor/data/raw/transcripts/
+src/gent_disagreement_rag/data/raw/transcripts/
 
 # Processed segments
-src/gent_disagreement_processor/data/processed/transcripts/
+src/gent_disagreement_rag/data/processed/transcripts/
 
 # Embedding-ready segments
-src/gent_disagreement_processor/data/embedding_ready_segments/
+src/gent_disagreement_rag/data/embedding_ready_segments/
 
 # Statistics
-src/gent_disagreement_processor/data/statistics/
+src/gent_disagreement_rag/data/statistics/

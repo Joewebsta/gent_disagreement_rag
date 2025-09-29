@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Database reset script for gent_disagreement_processor.
+Database reset script for gent_disagreement_rag.
 
 This script drops all tables and recreates the database schema.
 Use with caution as this will delete all data!
@@ -14,7 +14,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "src"))
 
-from gent_disagreement_processor.core.database_manager import DatabaseManager
+from gent_disagreement_rag.core.database_manager import DatabaseManager
 
 
 def setup_logging() -> None:

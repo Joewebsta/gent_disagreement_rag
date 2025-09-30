@@ -1,0 +1,14 @@
+[
+  {
+    "speaker": "Speaker Name",
+    "text": "Sample transcript segment text goes here."
+  },
+  {
+    "speaker": "Another Speaker",
+    "text": "Another sample segment of dialogue from the podcast."
+  },
+  {
+    "speaker": "Speaker Name",
+    "text": "And a third example segment showing the simple structure of processed transcripts."
+  }
+]

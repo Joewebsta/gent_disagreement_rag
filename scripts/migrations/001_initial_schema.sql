@@ -1,5 +1,5 @@
 -- Initial database schema migration
--- Creates the basic table structure for the gent_disagreement_processor
+-- Creates the basic table structure for the gent_disagreement_rag
 
 -- Enable vector extension for embeddings
 CREATE EXTENSION IF NOT EXISTS vector;

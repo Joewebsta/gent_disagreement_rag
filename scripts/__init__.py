@@ -1,1 +1,1 @@
-"""Database management scripts for gent_disagreement_processor."""
+"""Database management scripts for gent_disagreement_rag."""

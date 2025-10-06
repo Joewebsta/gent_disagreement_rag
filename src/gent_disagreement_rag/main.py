@@ -1,5 +1,5 @@
 """
-Main application for gent_disagreement_processor.
+Main application for gent_disagreement_rag.
 
 Before running this application, ensure the database is set up by running:
     poetry run seed-db

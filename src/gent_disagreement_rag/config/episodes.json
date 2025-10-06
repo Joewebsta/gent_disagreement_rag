@@ -1,6 +1,24 @@
 [
   {
     "episode_id": 1,
+    "file_name": "AGD-180-7.mp3",
+    "processed_transcript_path": "src/gent_disagreement_rag/data/processed/transcripts/AGD-180-7.json",
+    "processed": false
+  },
+  {
+    "episode_id": 2,
+    "file_name": "AGD-181-7.mp3",
+    "processed_transcript_path": "src/gent_disagreement_rag/data/processed/transcripts/AGD-181-7.json",
+    "processed": false
+  },
+  {
+    "episode_id": 3,
+    "file_name": "AGD-182-7.mp3",
+    "processed_transcript_path": "src/gent_disagreement_rag/data/processed/transcripts/AGD-182-7.json",
+    "processed": false
+  },
+  {
+    "episode_id": 1,
     "file_name": "AGD-180.mp3",
     "processed_transcript_path": "src/gent_disagreement_rag/data/processed/transcripts/AGD-180.json",
     "processed": true

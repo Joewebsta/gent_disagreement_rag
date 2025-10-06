@@ -8,14 +8,15 @@ To reset the database (WARNING: deletes all data):
     poetry run reset-db
 """
 
-from gent_disagreement_processor.core import (
+from gent_disagreement_rag.config import load_episodes
+from gent_disagreement_rag.core import (
     AudioTranscriber,
     DatabaseManager,
     EmbeddingService,
     TranscriptExporter,
     TranscriptFormatter,
 )
-from gent_disagreement_processor.utils import load_processed_segments
+from gent_disagreement_rag.utils import load_processed_segments
 
 
 def main():
@@ -39,15 +40,17 @@ def main():
     exporter = TranscriptExporter()
     embedding_service = EmbeddingService()
 
-    episodes = [
-        {"episode_id": 1, "file_name": "AGD-180.mp3"},
-        {"episode_id": 2, "file_name": "AGD-181.mp3"},
-        {"episode_id": 3, "file_name": "AGD-182.mp3"},
-    ]
+    # Load episode configuration
+    episodes = load_episodes()
 
     for episode in episodes:
+        # Skip already processed episodes
+        if episode.get("processed", False):
+            print(f"⏭️  Skipping episode {episode['episode_id']} - already processed")
+            continue
         file_name = episode["file_name"]
         episode_id = episode["episode_id"]
+        processed_transcript_path = episode["processed_transcript_path"]
 
         # Transcribe audio file
         raw_transcript_path = audio_transcriber.generate_transcript(file_name)
@@ -61,7 +64,9 @@ def main():
         )
 
         # Generate embeddings
-        segments = load_processed_segments(processed_transcript_path)
+        from pathlib import Path
+
+        segments = load_processed_segments(Path(processed_transcript_path))
         embeddings = embedding_service.generate_embeddings(segments)
 
         # Store the embeddings in the database

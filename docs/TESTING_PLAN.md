@@ -98,7 +98,7 @@ Test failure scenarios:
 ```python
 # tests/unit/test_transcript_formatter.py
 import pytest
-from gent_disagreement_processor.core import TranscriptFormatter
+from gent_disagreement_rag.core import TranscriptFormatter
 
 class TestTranscriptFormatter:
     def test_format_segments_with_valid_data(self, sample_transcript_data):
@@ -121,7 +121,7 @@ class TestTranscriptFormatter:
 poetry run pytest
 
 # Run with coverage
-poetry run pytest --cov=gent_disagreement_processor
+poetry run pytest --cov=gent_disagreement_rag
 
 # Run specific test file
 poetry run pytest tests/unit/test_audio_transcriber.py

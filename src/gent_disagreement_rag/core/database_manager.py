@@ -4,7 +4,6 @@ from typing import List, Optional
 
 import psycopg2
 from dotenv import load_dotenv
-from psycopg2.extras import RealDictCursor
 
 
 class DatabaseManager:
@@ -43,6 +42,27 @@ class DatabaseManager:
 
         # Setup logging
         self.logger = logging.getLogger(__name__)
+
+    def validate_connection(self) -> bool:
+        """
+        Validate that a database connection can be established.
+
+        Returns:
+            bool: True if connection is successful
+
+        Raises:
+            ConnectionError: If connection fails with detailed error message
+        """
+        try:
+            conn = self.get_connection()
+            conn.close()
+            return True
+        except Exception as e:
+            raise ConnectionError(
+                f"Database connection failed!\n"
+                f"Please run 'poetry run seed-db' to set up the database first.\n"
+                f"Error: {e}"
+            )
 
     def get_connection(self):
         """

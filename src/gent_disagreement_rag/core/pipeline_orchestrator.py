@@ -16,12 +16,10 @@ class PipelineOrchestrator:
 
         # Verify database connection
         try:
-            self.database_manager.get_connection().close()
-        except Exception as e:
-            print("❌ Database connection failed!")
-            print("Please run 'poetry run seed-db' to set up the database first.")
-            print(f"Error: {e}")
-            return
+            self.database_manager.validate_connection()
+        except ConnectionError as e:
+            print(f"❌ {e}")
+            raise
 
         self.audio_transcriber = AudioTranscriber()
         self.embedding_service = EmbeddingService()

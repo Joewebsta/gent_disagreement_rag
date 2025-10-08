@@ -6,7 +6,9 @@ from typing import List, Dict
 class TranscriptFormatter:
     """Formats raw transcript data into structured segments for further processing."""
 
-    def format_segments(self, transcript_path: Path) -> List[Dict[str, str]]:
+    def format_segments(
+        self, transcript_path: Path, speakers_map: Dict[str, str]
+    ) -> List[Dict[str, str]]:
         """Format raw transcript data into structured segments."""
 
         segments = []
@@ -23,12 +25,7 @@ class TranscriptFormatter:
 
             for paragraph in paragraphs:
                 speaker = str(paragraph["speaker"])
-
-                # Map speaker IDs to names
-                if speaker == "0":
-                    speaker = "Ricky Ghoshroy"
-                elif speaker == "1":
-                    speaker = "Brendan Kelly"
+                speaker = speakers_map.get(speaker, f"Speaker {speaker}")
 
                 # If speaker changes, save current segment and start new one
                 if current_speaker != speaker:
@@ -39,6 +36,7 @@ class TranscriptFormatter:
                                 "text": " ".join(current_text).strip(),
                             }
                         )
+
                     current_speaker = speaker
                     current_text = []
 

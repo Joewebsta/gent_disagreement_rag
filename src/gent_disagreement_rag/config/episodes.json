@@ -3,36 +3,64 @@
     "episode_id": 1,
     "file_name": "AGD-180-7.mp3",
     "processed_transcript_path": "src/gent_disagreement_rag/data/processed/transcripts/AGD-180-7.json",
+    "speakers_map": {
+      "1": "Ricky Ghoshroy",
+      "2": "Brendan Kelly",
+      "3": "Professor Jack Beermann"
+    },
     "processed": false
   },
   {
     "episode_id": 2,
     "file_name": "AGD-181-7.mp3",
     "processed_transcript_path": "src/gent_disagreement_rag/data/processed/transcripts/AGD-181-7.json",
+    "speakers_map": {
+      "1": "Ricky Ghoshroy",
+      "2": "Brendan Kelly"
+    },
     "processed": false
   },
   {
     "episode_id": 3,
     "file_name": "AGD-182-7.mp3",
     "processed_transcript_path": "src/gent_disagreement_rag/data/processed/transcripts/AGD-182-7.json",
+    "speakers_map": {
+      "1": "Ricky Ghoshroy",
+      "2": "Brendan Kelly",
+      "3": "Lydia DePhillis"
+    },
     "processed": false
   },
   {
     "episode_id": 1,
     "file_name": "AGD-180.mp3",
     "processed_transcript_path": "src/gent_disagreement_rag/data/processed/transcripts/AGD-180.json",
+    "speakers_map": {
+      "1": "Ricky Ghoshroy",
+      "2": "Brendan Kelly",
+      "3": "Professor Jack Beermann"
+    },
     "processed": true
   },
   {
     "episode_id": 2,
     "file_name": "AGD-181.mp3",
     "processed_transcript_path": "src/gent_disagreement_rag/data/processed/transcripts/AGD-181.json",
+    "speakers_map": {
+      "1": "Ricky Ghoshroy",
+      "2": "Brendan Kelly"
+    },
     "processed": true
   },
   {
     "episode_id": 3,
     "file_name": "AGD-182.mp3",
     "processed_transcript_path": "src/gent_disagreement_rag/data/processed/transcripts/AGD-182.json",
+    "speakers_map": {
+      "1": "Ricky Ghoshroy",
+      "2": "Brendan Kelly",
+      "3": "Lydia DePhillis"
+    },
     "processed": true
   }
 ]

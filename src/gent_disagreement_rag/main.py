@@ -48,6 +48,8 @@ def main():
         if episode.get("processed", False):
             print(f"⏭️  Skipping episode {episode['episode_id']} - already processed")
             continue
+
+        speakers_map = episode["speakers_map"]
         file_name = episode["file_name"]
         episode_id = episode["episode_id"]
         processed_transcript_path = episode["processed_transcript_path"]
@@ -56,7 +58,9 @@ def main():
         raw_transcript_path = audio_transcriber.generate_transcript(file_name)
 
         # Format the transcript data
-        formatted_segments = formatter.format_segments(raw_transcript_path)
+        formatted_segments = formatter.format_segments(
+            raw_transcript_path, speakers_map
+        )
 
         # Export the formatted data
         processed_transcript_path = exporter.export_segments(

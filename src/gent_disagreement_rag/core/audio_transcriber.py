@@ -100,7 +100,6 @@ class AudioTranscriber:
         Returns:
             Deepgram API response object
         """
-        print(f"Transcribing file...")
 
         with open(audio_file_path, "rb") as audio_file:
             response = client.listen.rest.v("1").transcribe_file(
@@ -139,7 +138,6 @@ class AudioTranscriber:
         audio_file_path = self.audio_dir / file_name
 
         try:
-            print(f"Starting transcription of: {file_name}")
 
             # Validate input file
             self._validate_audio_file(audio_file_path)
@@ -154,10 +152,6 @@ class AudioTranscriber:
             base_file_name = audio_file_path.stem
             output_path = self._save_transcript(response, base_file_name)
 
-            print(f"Transcription completed successfully!")
-            print(
-                f"Transcript saved: {output_path.parent.parent.name}/{output_path.parent.name}/{output_path.name}"
-            )
             return output_path
 
         except FileNotFoundError as e:

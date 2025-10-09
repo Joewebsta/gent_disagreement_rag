@@ -33,5 +33,4 @@ class TranscriptExporter:
         with open(output_file, "w") as f:
             json.dump(segments, f, indent=2)
 
-        print(f"Exported {len(segments)} segments to {output_file}")
         return output_file

@@ -93,7 +93,6 @@ class DatabaseManager:
                     ),
                 )
             conn.commit()
-            self.logger.info(f"Stored {len(embeddings)} embeddings successfully!")
         except Exception as e:
             self.logger.error(f"Error storing embeddings: {e}")
             conn.rollback()

@@ -47,7 +47,6 @@ class EmbeddingService:
                     }
                 )
 
-            print("All embeddings generated successfully!")
             return segments_with_embeddings
         except Exception as e:
             print("Error generating embeddings:", e)
@@ -68,7 +67,7 @@ class EmbeddingService:
                         "embedding": embedding,
                     }
                 )
-            print("All embeddings generated successfully!")
+
             return embeddings
         except Exception as e:
             print("Error generating embeddings:", e)

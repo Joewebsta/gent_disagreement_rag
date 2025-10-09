@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from gent_disagreement_rag.config import load_episodes
 from gent_disagreement_rag.core import (
@@ -12,6 +13,7 @@ from gent_disagreement_rag.utils import load_processed_segments
 
 class PipelineOrchestrator:
     def __init__(self):
+        self.logger = logging.getLogger(__name__)
         self.database_manager = DatabaseManager()
 
         # Verify database connection
@@ -29,17 +31,39 @@ class PipelineOrchestrator:
 
     def process_episodes(self):
         """Process all unprocessed episodes through the full pipeline."""
-        for episode in self.episodes:
+        unprocessed = [ep for ep in self.episodes if not ep.get("processed", False)]
+        total = len(unprocessed)
+        self.logger.info(f"Starting pipeline processing for {total} episode(s)")
+
+        for idx, episode in enumerate(self.episodes, 1):
             if self._should_skip_episode(episode):
                 continue
+            episode_info = self._get_episode_info(episode)
+            self.logger.info(f"Processing {idx}/{total}: {episode_info}")
             self._process_single_episode(episode)
+
+        self.logger.info(f"Pipeline processing complete. Processed {total} episode(s)")
 
     def format_existing_raw_transcripts(self):
         """Format existing raw transcripts without transcription."""
-        for episode in self.episodes:
+        unprocessed = [ep for ep in self.episodes if not ep.get("processed", False)]
+        total = len(unprocessed)
+        self.logger.info(f"Starting formatting for {total} episode(s)")
+
+        for idx, episode in enumerate(self.episodes, 1):
             if self._should_skip_episode(episode):
                 continue
+            episode_info = self._get_episode_info(episode)
+            self.logger.info(f"Formatting {idx}/{total}: {episode_info}")
             self._format_single_episode(episode)
+
+        self.logger.info(f"Formatting complete. Formatted {total} episode(s)")
+
+    def _get_episode_info(self, episode: dict) -> str:
+        """Get a concise episode identifier for logging."""
+        episode_id = episode.get("episode_id", "unknown")
+        file_name = episode.get("file_name", "unknown")
+        return f"{episode_id} ({file_name})"
 
     def _should_skip_episode(self, episode: dict) -> bool:
         """
@@ -52,7 +76,8 @@ class PipelineOrchestrator:
             True if episode should be skipped, False otherwise
         """
         if episode.get("processed", False):
-            print(f"⏭️  Skipping episode {episode['episode_id']} - already processed")
+            episode_info = self._get_episode_info(episode)
+            self.logger.info(f"⏭️  Skipping {episode_info} - already processed")
             return True
         return False
 
@@ -78,19 +103,28 @@ class PipelineOrchestrator:
         episode_id = episode["episode_id"]
 
         # Transcribe audio file
+        self.logger.info(f"  → Transcribing audio")
         raw_transcript_path = self.audio_transcriber.generate_transcript(file_name)
+        self.logger.info(f"  ✓ Transcription complete")
 
         # Format and export the raw transcript
+        self.logger.info(f"  → Formatting transcript")
         processed_transcript_path = self._format_and_export_raw_transcript(
             raw_transcript_path, speakers_map
         )
+        self.logger.info(f"  ✓ Formatting complete")
 
         # Generate embeddings
+        self.logger.info(f"  → Generating embeddings")
         segments = load_processed_segments(Path(processed_transcript_path))
         embeddings = self.embedding_service.generate_embeddings(segments)
+        self.logger.info(f"  ✓ Generated {len(embeddings)} embeddings")
 
         # Store the embeddings in the database
+        self.logger.info(f"  → Storing embeddings")
         self.database_manager.store_embeddings(embeddings, episode_id)
+        self.logger.info(f"  ✓ Stored {len(embeddings)} embeddings")
+        self.logger.info(f"✓ Completed processing")
 
     def _format_single_episode(self, episode: dict) -> None:
         """
@@ -110,7 +144,10 @@ class PipelineOrchestrator:
         raw_transcript_path = Path(episode["raw_transcript_path"])
 
         # Format and export the raw transcript
+        self.logger.info(f"  → Formatting raw transcript")
         self._format_and_export_raw_transcript(raw_transcript_path, speakers_map)
+        self.logger.info(f"  ✓ Formatting complete")
+        self.logger.info(f"✓ Completed formatting")
 
     def _format_and_export_raw_transcript(
         self, raw_transcript_path: Path, speakers_map: dict

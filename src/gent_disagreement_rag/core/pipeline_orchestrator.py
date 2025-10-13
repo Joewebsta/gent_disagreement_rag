@@ -105,6 +105,11 @@ class PipelineOrchestrator:
         # Transcribe audio file
         self.logger.info(f"  → Transcribing audio")
         raw_transcript_path = self.audio_transcriber.generate_transcript(file_name)
+        
+        if raw_transcript_path is None:
+            self.logger.error(f"  ✗ Transcription failed - skipping episode")
+            return
+        
         self.logger.info(f"  ✓ Transcription complete")
 
         # Format and export the raw transcript

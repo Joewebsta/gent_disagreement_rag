@@ -26,6 +26,44 @@ def setup_logging() -> None:
     )
 
 
+def create_database_if_not_exists(db_manager: DatabaseManager) -> None:
+    """Create the database if it doesn't exist."""
+    logger = logging.getLogger(__name__)
+    logger.info("Checking if database exists...")
+    
+    import psycopg2
+    from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+    
+    # Get connection params
+    params = db_manager.connection_params.copy()
+    db_name = params.pop("database")
+    
+    # Connect to default postgres database to check/create target database
+    params["database"] = "postgres"
+    
+    conn = psycopg2.connect(**params)
+    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    cur = conn.cursor()
+    
+    try:
+        # Check if database exists
+        cur.execute(
+            "SELECT 1 FROM pg_database WHERE datname = %s",
+            (db_name,)
+        )
+        exists = cur.fetchone()
+        
+        if not exists:
+            logger.info(f"Creating database '{db_name}'...")
+            cur.execute(f'CREATE DATABASE "{db_name}"')
+            logger.info(f"Database '{db_name}' created successfully!")
+        else:
+            logger.info(f"Database '{db_name}' already exists.")
+    finally:
+        cur.close()
+        conn.close()
+
+
 def create_schema(db_manager: DatabaseManager) -> None:
     """Create the database schema by running migration files."""
     logger = logging.getLogger(__name__)
@@ -86,7 +124,7 @@ def seed_episodes(db_manager: DatabaseManager) -> None:
             ) VALUES 
                 ('180', 'A SCOTUS ''24-''25" term review with Professor Jack Beermann', 'AGD-180.mp3', '2025-08-12'),
                 ('181', 'Six in Sixty: creeping authoritarianism', 'AGD-181.mp3', '2025-08-26'),
-                ('182', 'How tariffs are affecting the global economy and geopolitics with Lydia DePillis', 'AGD-182.mp3', '2025-02-09'),
+                ('182', 'How tariffs are affecting the global economy and geopolitics with Lydia DePillis', 'AGD-182.mp3', '2025-02-09')
             ON CONFLICT (episode_number) DO NOTHING;
             """
         )
@@ -112,6 +150,9 @@ def main() -> None:
 
         # Initialize database manager
         db_manager = DatabaseManager()
+        
+        # Create database if it doesn't exist
+        create_database_if_not_exists(db_manager)
 
         # Create schema (run migrations)
         create_schema(db_manager)

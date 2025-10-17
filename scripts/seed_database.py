@@ -106,28 +106,24 @@ def create_schema(db_manager: DatabaseManager) -> None:
 
 
 def seed_episodes(db_manager: DatabaseManager) -> None:
-    """Seed the database with initial episode data."""
+    """Seed the database with initial episode data via the canonical SQL file."""
     logger = logging.getLogger(__name__)
-    logger.info("Seeding episodes data...")
+    logger.info("Seeding episodes data from 002_seed_episodes.sql...")
+
+    migrations_dir = Path(__file__).parent / "migrations"
+    seed_file = migrations_dir / "002_seed_episodes.sql"
+
+    if not seed_file.exists():
+        raise FileNotFoundError(f"Seed file not found: {seed_file}")
 
     conn = db_manager.get_connection()
     cur = conn.cursor()
 
     try:
-        cur.execute(
-            """
-            INSERT INTO episodes (
-                episode_number,
-                title,
-                file_name, 
-                date_published
-            ) VALUES 
-                ('180', 'A SCOTUS ''24-''25" term review with Professor Jack Beermann', 'AGD-180.mp3', '2025-08-12'),
-                ('181', 'Six in Sixty: creeping authoritarianism', 'AGD-181.mp3', '2025-08-26'),
-                ('182', 'How tariffs are affecting the global economy and geopolitics with Lydia DePillis', 'AGD-182.mp3', '2025-02-09')
-            ON CONFLICT (episode_number) DO NOTHING;
-            """
-        )
+        with open(seed_file, "r", encoding="utf-8") as f:
+            seed_sql = f.read()
+
+        cur.execute(seed_sql)
 
         conn.commit()
         logger.info("Episodes data seeded successfully!")

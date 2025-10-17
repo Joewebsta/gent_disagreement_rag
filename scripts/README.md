@@ -34,7 +34,7 @@ python scripts/reset_database.py
 The `migrations/` directory contains SQL files that define the database schema:
 
 - `001_initial_schema.sql` - Creates tables and indexes
-- `002_seed_episodes.sql` - Inserts initial episode data
+- `002_seed_episodes.sql` - Inserts initial episode data (the Python seed script replays this file so update it to change seed data)
 
 ## Workflow
 

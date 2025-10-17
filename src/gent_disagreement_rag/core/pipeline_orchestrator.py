@@ -1,4 +1,5 @@
 import logging
+from pprint import pprint
 from pathlib import Path
 from gent_disagreement_rag.config import load_episodes
 from gent_disagreement_rag.core import (
@@ -27,17 +28,53 @@ class PipelineOrchestrator:
         self.embedding_service = EmbeddingService()
         self.transcript_exporter = TranscriptExporter()
         self.transcript_formatter = TranscriptFormatter()
-        self.episodes = load_episodes()
+        # self.episodes = load_episodes()
 
     def process_episodes(self):
         """Process all unprocessed episodes through the full pipeline."""
-        unprocessed = [ep for ep in self.episodes if not ep.get("processed", False)]
-        total = len(unprocessed)
+        unprocessed_episodes = self.database_manager.retrieve_unprocessed_episodes()
+
+        if not unprocessed_episodes:
+            self.logger.info("No episodes to process.")
+            return
+
+        formatted_episodes = []
+        current_episode_data = {}
+        current_episode_number = None
+
+        for episode in unprocessed_episodes:
+            episode_number = episode["episode_number"]
+            speaker_number = str(episode["speaker_number"])
+
+            if current_episode_number != episode_number:
+                if current_episode_data:
+                    formatted_episodes.append(current_episode_data)
+
+                current_episode_number = episode_number
+                current_episode_data = {
+                    "episode_id": episode_number,
+                    "episode_number": episode_number,
+                    "file_name": episode["file_name"],
+                    "speaker_map": {},
+                    "speaker_id_map": {},
+                }
+
+            current_episode_data["speaker_map"][speaker_number] = episode["speaker_name"]
+            current_episode_data["speaker_id_map"][episode["speaker_name"]] = episode["speaker_id"]
+
+        if current_episode_data:
+            formatted_episodes.append(current_episode_data)
+
+        pprint("formatted episodes")
+        pprint(formatted_episodes)
+
+        
+        total = len(formatted_episodes)
         self.logger.info(f"Starting pipeline processing for {total} episode(s)")
 
-        for idx, episode in enumerate(self.episodes, 1):
-            if self._should_skip_episode(episode):
-                continue
+        for idx, episode in enumerate(formatted_episodes, 1):
+        #     if self._should_skip_episode(episode):
+        #         continue
             episode_info = self._get_episode_info(episode)
             self.logger.info(f"Processing {idx}/{total}: {episode_info}")
             self._process_single_episode(episode)
@@ -61,9 +98,9 @@ class PipelineOrchestrator:
 
     def _get_episode_info(self, episode: dict) -> str:
         """Get a concise episode identifier for logging."""
-        episode_id = episode.get("episode_id", "unknown")
+        episode_number = episode.get("episode_number", "unknown")
         file_name = episode.get("file_name", "unknown")
-        return f"{episode_id} ({file_name})"
+        return f"{episode_number} ({file_name})"
 
     def _should_skip_episode(self, episode: dict) -> bool:
         """
@@ -98,7 +135,8 @@ class PipelineOrchestrator:
         Raises:
             Exception: If any pipeline stage fails
         """
-        speakers_map = episode["speakers_map"]
+        speaker_map = episode["speaker_map"]
+        speaker_id_map = episode["speaker_id_map"]
         file_name = episode["file_name"]
         episode_id = episode["episode_id"]
 
@@ -115,7 +153,7 @@ class PipelineOrchestrator:
         # Format and export the raw transcript
         self.logger.info(f"  → Formatting transcript")
         processed_transcript_path = self._format_and_export_raw_transcript(
-            raw_transcript_path, speakers_map
+            raw_transcript_path, speaker_map
         )
         self.logger.info(f"  ✓ Formatting complete")
 
@@ -125,10 +163,40 @@ class PipelineOrchestrator:
         embeddings = self.embedding_service.generate_embeddings(segments)
         self.logger.info(f"  ✓ Generated {len(embeddings)} embeddings")
 
+        embeddings_with_ids = []
+        missing_speakers = set()
+        for embedding_data in embeddings:
+            speaker_name = embedding_data["speaker"]
+            speaker_id = speaker_id_map.get(speaker_name)
+            
+            if speaker_id is None:
+                missing_speakers.add(speaker_name)
+                continue
+            
+            embeddings_with_ids.append(
+                {
+                    "speaker_id": speaker_id,
+                    "text": embedding_data["text"],
+                    "embedding": embedding_data["embedding"],
+                }
+            )
+
+        if missing_speakers:
+            missing_str = ", ".join(sorted(missing_speakers))
+            self.logger.warning(
+                f"  ⚠️  Could not resolve speaker IDs for: {missing_str}. Skipping those segments."
+            )
+
+        if not embeddings_with_ids:
+            self.logger.error(
+                "  ✗ No embeddings with valid speaker IDs. Skipping episode."
+            )
+            return
+
         # Store the embeddings in the database
         self.logger.info(f"  → Storing embeddings")
-        self.database_manager.store_embeddings(embeddings, episode_id)
-        self.logger.info(f"  ✓ Stored {len(embeddings)} embeddings")
+        self.database_manager.store_embeddings(embeddings_with_ids, episode_id)
+        self.logger.info(f"  ✓ Stored {len(embeddings_with_ids)} embeddings")
         self.logger.info(f"✓ Completed processing")
 
     def _format_single_episode(self, episode: dict) -> None:

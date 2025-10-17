@@ -3,6 +3,7 @@ import os
 from typing import List, Optional
 
 import psycopg2
+from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 
 
@@ -70,12 +71,43 @@ class DatabaseManager:
         """
         return psycopg2.connect(**self.connection_params)
 
+    def retrieve_unprocessed_episodes(self):
+        conn = self.get_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        episodes = []
+
+        try:
+            cursor.execute(
+                """
+                SELECT e.episode_number, 
+                       e.file_name, 
+                       e.is_processed, 
+                       es.speaker_number, 
+                       s.name AS speaker_name,
+                       s.id AS speaker_id
+                FROM episodes AS e
+                JOIN episode_speakers AS es
+                    ON e.episode_number = es.episode_id
+                JOIN speakers AS s
+                    ON s.id = es.speaker_id
+                WHERE e.is_processed = false
+                ORDER BY e.episode_number, es.speaker_number
+                """
+            )
+            episodes = cursor.fetchall()
+        except:
+            raise
+        finally:
+            cursor.close()
+            conn.close()
+        return episodes
+
     def store_embeddings(self, embeddings: List[dict], episode_id: int) -> None:
         """
         Store a list of embeddings with their associated segment data into the database.
 
         Args:
-            embeddings: List of dictionaries containing 'speaker', 'text', and 'embedding' keys
+            embeddings: List of dictionaries containing 'speaker_id', 'text', and 'embedding' keys
             episode_id: The episode ID to associate with these embeddings
         """
         conn = self.get_connection()
@@ -84,9 +116,9 @@ class DatabaseManager:
         try:
             for embedding_data in embeddings:
                 cursor.execute(
-                    "INSERT INTO transcript_segments (speaker, text, embedding, episode_id) VALUES (%s, %s, %s, %s)",
+                    "INSERT INTO transcript_segments (speaker_id, text, embedding, episode_id) VALUES (%s, %s, %s, %s)",
                     (
-                        embedding_data["speaker"],
+                        embedding_data["speaker_id"],
                         embedding_data["text"],
                         embedding_data["embedding"],
                         episode_id,

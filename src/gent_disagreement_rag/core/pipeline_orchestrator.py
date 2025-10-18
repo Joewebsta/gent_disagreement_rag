@@ -49,16 +49,31 @@ class PipelineOrchestrator:
 
     def format_existing_raw_transcripts(self):
         """Format existing raw transcripts without transcription."""
-        unprocessed = [ep for ep in self.episodes if not ep.get("processed", False)]
-        total = len(unprocessed)
+        episode_rows = self._fetch_unprocessed_episodes()
+
+        if not episode_rows:
+            self.logger.info("No episodes to format.")
+            return
+
+        episode_payloads = self._group_episode_rows(episode_rows)
+        total = len(episode_payloads)
         self.logger.info(f"Starting formatting for {total} episode(s)")
 
-        for idx, episode in enumerate(self.episodes, 1):
-            if self._should_skip_episode(episode):
-                continue
+        for idx, episode in enumerate(episode_payloads, 1):
             episode_info = self._get_episode_info(episode)
+            raw_transcript_path = self._resolve_raw_transcript_path(episode)
+
+            if raw_transcript_path is None:
+                self.logger.warning(
+                    f"  ⚠️  Missing raw transcript for {episode_info}. Skipping."
+                )
+                continue
+
+            format_payload = dict(episode)
+            format_payload["raw_transcript_path"] = raw_transcript_path
+
             self.logger.info(f"Formatting {idx}/{total}: {episode_info}")
-            self._format_single_episode(episode)
+            self._format_single_episode(format_payload)
 
         self.logger.info(f"Formatting complete. Formatted {total} episode(s)")
 
@@ -206,6 +221,11 @@ class PipelineOrchestrator:
         episode_payload["speaker_map"][speaker_number] = speaker_name
         episode_payload["speaker_id_map"][speaker_name] = episode_row["speaker_id"]
 
+    def _resolve_raw_transcript_path(self, episode):
+        base_name = Path(episode["file_name"]).stem
+        candidate_path = self.audio_transcriber.output_dir / f"{base_name}.json"
+        return candidate_path if candidate_path.exists() else None
+
     def _format_single_episode(self, episode: dict) -> None:
         """
         Format an existing raw transcript for a single episode.
@@ -220,12 +240,12 @@ class PipelineOrchestrator:
         Raises:
             Exception: If formatting/export fails
         """
-        speakers_map = episode["speakers_map"]
+        speaker_map = episode["speaker_map"]
         raw_transcript_path = Path(episode["raw_transcript_path"])
 
         # Format and export the raw transcript
         self.logger.info(f"  → Formatting raw transcript")
-        self._format_and_export_raw_transcript(raw_transcript_path, speakers_map)
+        self._format_and_export_raw_transcript(raw_transcript_path, speaker_map)
         self.logger.info(f"  ✓ Formatting complete")
         self.logger.info(f"✓ Completed formatting")
 

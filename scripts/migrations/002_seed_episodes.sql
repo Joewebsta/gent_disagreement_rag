@@ -40,14 +40,14 @@ SELECT
     mapping.role::speaker_role_enum
 FROM (
     VALUES
-        (180, 1, 'Ricky Ghoshroy', 'host'),
-        (180, 2, 'Brendan Kelly', 'host'),
-        (180, 3, 'Professor Jack Beermann', 'guest'),
-        (181, 1, 'Ricky Ghoshroy', 'host'),
-        (181, 2, 'Brendan Kelly', 'host'),
-        (182, 1, 'Ricky Ghoshroy', 'host'),
-        (182, 2, 'Brendan Kelly', 'host'),
-        (182, 3, 'Lydia DePhillis', 'guest')
+        (180, 0, 'Ricky Ghoshroy', 'host'),
+        (180, 1, 'Brendan Kelly', 'host'),
+        (180, 2, 'Professor Jack Beermann', 'guest'),
+        (181, 0, 'Ricky Ghoshroy', 'host'),
+        (181, 1, 'Brendan Kelly', 'host'),
+        (182, 0, 'Ricky Ghoshroy', 'host'),
+        (182, 1, 'Brendan Kelly', 'host'),
+        (182, 2, 'Lydia DePhillis', 'guest')
 ) AS mapping(episode_number, speaker_number, speaker_name, role)
 JOIN speakers s ON s.name = mapping.speaker_name
 ON CONFLICT (episode_id, speaker_number) DO UPDATE

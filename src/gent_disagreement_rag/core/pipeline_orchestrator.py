@@ -1,7 +1,5 @@
 import logging
-from pprint import pprint
 from pathlib import Path
-from gent_disagreement_rag.config import load_episodes
 from gent_disagreement_rag.core import (
     AudioTranscriber,
     DatabaseManager,
@@ -28,7 +26,6 @@ class PipelineOrchestrator:
         self.embedding_service = EmbeddingService()
         self.transcript_exporter = TranscriptExporter()
         self.transcript_formatter = TranscriptFormatter()
-        # self.episodes = load_episodes()
 
     def process_episodes(self):
         """Process all unprocessed episodes through the full pipeline."""
@@ -65,10 +62,6 @@ class PipelineOrchestrator:
         if current_episode_data:
             formatted_episodes.append(current_episode_data)
 
-        pprint("formatted episodes")
-        pprint(formatted_episodes)
-
-        
         total = len(formatted_episodes)
         self.logger.info(f"Starting pipeline processing for {total} episode(s)")
 

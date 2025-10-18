@@ -29,45 +29,18 @@ class PipelineOrchestrator:
 
     def process_episodes(self):
         """Process all unprocessed episodes through the full pipeline."""
-        unprocessed_episodes = self.database_manager.retrieve_unprocessed_episodes()
+        unprocessed_episodes = self._fetch_unprocessed_episodes()
 
         if not unprocessed_episodes:
             self.logger.info("No episodes to process.")
             return
 
-        formatted_episodes = []
-        current_episode_data = {}
-        current_episode_number = None
+        episode_payloads = self._group_episode_rows(unprocessed_episodes)
 
-        for episode in unprocessed_episodes:
-            episode_number = episode["episode_number"]
-            speaker_number = str(episode["speaker_number"])
-
-            if current_episode_number != episode_number:
-                if current_episode_data:
-                    formatted_episodes.append(current_episode_data)
-
-                current_episode_number = episode_number
-                current_episode_data = {
-                    "episode_id": episode_number,
-                    "episode_number": episode_number,
-                    "file_name": episode["file_name"],
-                    "speaker_map": {},
-                    "speaker_id_map": {},
-                }
-
-            current_episode_data["speaker_map"][speaker_number] = episode["speaker_name"]
-            current_episode_data["speaker_id_map"][episode["speaker_name"]] = episode["speaker_id"]
-
-        if current_episode_data:
-            formatted_episodes.append(current_episode_data)
-
-        total = len(formatted_episodes)
+        total = len(episode_payloads)
         self.logger.info(f"Starting pipeline processing for {total} episode(s)")
 
-        for idx, episode in enumerate(formatted_episodes, 1):
-        #     if self._should_skip_episode(episode):
-        #         continue
+        for idx, episode in enumerate(episode_payloads, 1):
             episode_info = self._get_episode_info(episode)
             self.logger.info(f"Processing {idx}/{total}: {episode_info}")
             self._process_single_episode(episode)
@@ -191,6 +164,47 @@ class PipelineOrchestrator:
         self.database_manager.store_embeddings(embeddings_with_ids, episode_id)
         self.logger.info(f"  ✓ Stored {len(embeddings_with_ids)} embeddings")
         self.logger.info(f"✓ Completed processing")
+
+    def _fetch_unprocessed_episodes(self):
+        return self.database_manager.retrieve_unprocessed_episodes()
+
+    def _group_episode_rows(self, episode_rows):
+        episode_payloads = []
+        current_episode_data = {}
+        current_episode_number = None
+
+        for episode in episode_rows:
+            episode_number = episode["episode_number"]
+
+            if current_episode_number != episode_number:
+                if current_episode_data:
+                    episode_payloads.append(current_episode_data)
+
+                current_episode_number = episode_number
+                current_episode_data = self._start_episode_payload(episode)
+
+            self._add_speaker_to_episode(current_episode_data, episode)
+
+        if current_episode_data:
+            episode_payloads.append(current_episode_data)
+
+        return episode_payloads
+
+    def _start_episode_payload(self, episode):
+        episode_number = episode["episode_number"]
+        return {
+            "episode_id": episode_number,
+            "episode_number": episode_number,
+            "file_name": episode["file_name"],
+            "speaker_map": {},
+            "speaker_id_map": {},
+        }
+
+    def _add_speaker_to_episode(self, episode_payload, episode_row):
+        speaker_number = str(episode_row["speaker_number"])
+        speaker_name = episode_row["speaker_name"]
+        episode_payload["speaker_map"][speaker_number] = speaker_name
+        episode_payload["speaker_id_map"][speaker_name] = episode_row["speaker_id"]
 
     def _format_single_episode(self, episode: dict) -> None:
         """
